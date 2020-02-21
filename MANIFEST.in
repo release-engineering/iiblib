@@ -1,5 +1,5 @@
 include MANIFEST.in
 include README.rst
 include LICENSE
-recursive-include docs *.rst conf.py Makefile
+recursive-include docs *.md *.rst conf.py Makefile
 recursive-include iiblib *.py

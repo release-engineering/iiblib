@@ -152,6 +152,8 @@ texinfo_documents = [
     )
 ]
 
+source_parsers = {".md": "recommonmark.parser.CommonMarkParser"}
+source_suffix = [".rst", ".md"]
 
 # -- Extension configuration -------------------------------------------------
 
