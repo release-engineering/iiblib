@@ -20,20 +20,20 @@ class IIBBuildDetailsModel(object):
     """Model class hodling data about index build task"""
 
     def __init__(
-            self,
-            _id,
-            state,
-            reason,
-            state_history,
-            from_index,
-            from_index_resolved,
-            bundles,
-            operators,
-            binary_image,
-            binary_image_resolved,
-            index_image,
-            request_type,
-            arches,
+        self,
+        _id,
+        state,
+        reason,
+        state_history,
+        from_index,
+        from_index_resolved,
+        bundles,
+        operators,
+        binary_image,
+        binary_image_resolved,
+        index_image,
+        request_type,
+        arches,
     ):
         """
         Args:
@@ -96,19 +96,19 @@ class IIBBuildDetailsModel(object):
 
     def __eq__(self, other):
         if (
-                self.id == other.id
-                and self.state == other.state
-                and self.reason == other.reason
-                and self.state_history == other.state_history
-                and self.from_index == other.from_index
-                and self.from_index_resolved == other.from_index_resolved
-                and self.bundles == other.bundles
-                and self.operators == other.operators
-                and self.binary_image == other.binary_image
-                and self.binary_image_resolved == other.binary_image_resolved
-                and self.index_image == other.index_image
-                and self.request_type == other.request_type
-                and self.arches == other.arches
+            self.id == other.id
+            and self.state == other.state
+            and self.reason == other.reason
+            and self.state_history == other.state_history
+            and self.from_index == other.from_index
+            and self.from_index_resolved == other.from_index_resolved
+            and self.bundles == other.bundles
+            and self.operators == other.operators
+            and self.binary_image == other.binary_image
+            and self.binary_image_resolved == other.binary_image_resolved
+            and self.index_image == other.index_image
+            and self.request_type == other.request_type
+            and self.arches == other.arches
         ):
             return True
         return False
@@ -132,8 +132,8 @@ class IIBBuildDetailsPager(object):
         """Reload items for current page"""
 
         ret = self.iibclient.get_builds(self.page, raw=True)
-        self.meta = ret['meta']
-        self._items = [IIBBuildDetailsModel.from_dict(x) for x in ret['items']]
+        self.meta = ret["meta"]
+        self._items = [IIBBuildDetailsModel.from_dict(x) for x in ret["items"]]
 
     def next(self):
         """Load items for next page and set it as current"""
@@ -154,15 +154,17 @@ class IIBBuildDetailsPager(object):
 
     @classmethod
     def from_dict(cls, iibclient, _dict):
-        ret = cls(iibclient, _dict['meta']['page'])
-        ret.meta = _dict['meta']
-        ret._items = [IIBBuildDetailsModel.from_dict(x) for x in _dict['items']]
+        ret = cls(iibclient, _dict["meta"]["page"])
+        ret.meta = _dict["meta"]
+        ret._items = [IIBBuildDetailsModel.from_dict(x) for x in _dict["items"]]
         return ret
 
     def __eq__(self, other):
-        return self._items == other._items and\
-            self.iibclient == other.iibclient and\
-            self.meta == other.meta
+        return (
+            self._items == other._items
+            and self.iibclient == other.iibclient
+            and self.meta == other.meta
+        )
 
 
 class IIBBasicAuth(IIBAuth):

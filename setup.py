@@ -8,7 +8,7 @@ from setuptools.command.test import test as TestCommand
 
 
 class Tox(TestCommand):
-    user_options = [('tox-args=', 'a', 'Arguments to pass to tox')]
+    user_options = [("tox-args=", "a", "Arguments to pass to tox")]
 
     def initialize_options(self):
         TestCommand.initialize_options(self)
@@ -22,6 +22,7 @@ class Tox(TestCommand):
     def run_tests(self):
         import tox
         import shlex
+
         if self.tox_args:
             errno = tox.cmdline(args=shlex.split(self.tox_args))
         else:
@@ -48,35 +49,31 @@ classifiers = [
 ]
 
 
-long_description = (
-    read_content("README.rst") +
-    read_content(os.path.join("docs/source", "CHANGELOG.rst")))
+long_description = read_content("README.rst") + read_content(
+    os.path.join("docs/source", "CHANGELOG.rst")
+)
 
-INSTALL_REQUIRES = [
-    'requests',
-    'requests-gssapi',
-    'gssapi',
-    'six']
+INSTALL_REQUIRES = ["requests", "requests-gssapi", "gssapi", "six"]
 
-extras_require = {
-    'reST': ['Sphinx'],
-    }
+extras_require = {"reST": ["Sphinx"]}
 
-if os.environ.get('READTHEDOCS', None):
-    extras_require['reST'].append('recommonmark')
+if os.environ.get("READTHEDOCS", None):
+    extras_require["reST"].append("recommonmark")
 
-setup(name='iiblib',
-      version='0.1.0',
-      description='IIB client library',
-      long_description=long_description,
-      author='Jindrich Luza',
-      author_email='jluza@redhat.com',
-      url='https://gitlab.cee.redhat.com/jluza/iiblib',
-      classifiers=classifiers,
-      packages=['iiblib'],
-      data_files=[],
-      install_requires=INSTALL_REQUIRES,
-      include_package_data=True,
-      extras_require=extras_require,
-      tests_require=['tox', 'mock', 'requests_mock'],
-      cmdclass={'test': Tox},)
+setup(
+    name="iiblib",
+    version="0.1.0",
+    description="IIB client library",
+    long_description=long_description,
+    author="Jindrich Luza",
+    author_email="jluza@redhat.com",
+    url="https://gitlab.cee.redhat.com/jluza/iiblib",
+    classifiers=classifiers,
+    packages=["iiblib"],
+    data_files=[],
+    install_requires=INSTALL_REQUIRES,
+    include_package_data=True,
+    extras_require=extras_require,
+    tests_require=["tox", "mock", "requests_mock"],
+    cmdclass={"test": Tox},
+)

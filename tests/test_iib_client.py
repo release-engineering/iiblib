@@ -69,7 +69,7 @@ def fixture_builds_page1_json(fixture_build_details_json):
             "per_page": 1,
             "previous": "",
             "total": 2,
-        }
+        },
     }
     return json
 
@@ -87,7 +87,7 @@ def fixture_builds_page2_json(fixture_build_details_json2):
             "per_page": 1,
             "previous": "",
             "total": 2,
-        }
+        },
     }
     return json
 
@@ -124,65 +124,62 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
             json=fixture_build_details_json,
         )
         m.register_uri(
-            "GET",
-            "/api/v1/builds/",
-            status_code=200,
-            json=fixture_builds_page1_json,
+            "GET", "/api/v1/builds/", status_code=200, json=fixture_builds_page1_json
         )
         m.register_uri(
-            "GET",
-            "/api/v1/builds/1/",
-            status_code=200,
-            json=fixture_build_details_json,
+            "GET", "/api/v1/builds/1/", status_code=200, json=fixture_build_details_json
         )
 
         iibc = IIBClient("fake-host")
-        assert iibc.add_bundles("index-image", "binary", "bundles-map", {}) ==\
-            IIBBuildDetailsModel.from_dict(fixture_build_details_json)
-        assert iibc.add_bundles("index-image", "binary", "bundles-map", {}, raw=True) ==\
+        assert iibc.add_bundles(
+            "index-image", "binary", "bundles-map", {}
+        ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        assert (
+            iibc.add_bundles("index-image", "binary", "bundles-map", {}, raw=True)
+            == fixture_build_details_json
+        )
+        assert iibc.remove_operators(
+            "index-image", "binary", ["operator1"], {}
+        ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        assert (
+            iibc.remove_operators("index-image", "binary", ["operator1"], {}, raw=True)
+            == fixture_build_details_json
+        )
+        assert iibc.get_build(1) == IIBBuildDetailsModel.from_dict(
             fixture_build_details_json
-        assert iibc.remove_operators("index-image", "binary", ["operator1"], {}) == \
-            IIBBuildDetailsModel.from_dict(fixture_build_details_json)
-        assert iibc.remove_operators("index-image", "binary", ["operator1"], {}, raw=True) ==\
-            fixture_build_details_json
-        assert iibc.get_build(1) ==\
-            IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        )
         assert iibc.get_build(1, raw=True) == fixture_build_details_json
 
-        assert iibc.get_builds() == IIBBuildDetailsPager.from_dict(iibc, fixture_builds_page1_json)
+        assert iibc.get_builds() == IIBBuildDetailsPager.from_dict(
+            iibc, fixture_builds_page1_json
+        )
         assert iibc.get_builds(raw=True) == fixture_builds_page1_json
 
 
 def test_client_wait_for_build(fixture_build_details_json):
     iibc = IIBClient("fake-host", poll_interval=1)
     bdetails_finished = copy.copy(fixture_build_details_json)
-    bdetails_finished['state'] = "complete"
+    bdetails_finished["state"] = "complete"
     with requests_mock.Mocker() as m:
         m.register_uri(
             "GET",
             "/api/v1/builds/1/",
-            [{
-                "json": fixture_build_details_json,
-                "status_code": 200},
-             {
-                 "json": bdetails_finished,
-                 "status_code": 200,
-             }]
+            [
+                {"json": fixture_build_details_json, "status_code": 200},
+                {"json": bdetails_finished, "status_code": 200},
+            ],
         )
         iibc.wait_for_build(IIBBuildDetailsModel.from_dict(fixture_build_details_json))
 
-    bdetails_finished['state'] = "failed"
+    bdetails_finished["state"] = "failed"
     with requests_mock.Mocker() as m:
         m.register_uri(
             "GET",
             "/api/v1/builds/1/",
-            [{
-                "json": fixture_build_details_json,
-                "status_code": 200},
-             {
-                 "json": bdetails_finished,
-                 "status_code": 200,
-             }]
+            [
+                {"json": fixture_build_details_json, "status_code": 200},
+                {"json": bdetails_finished, "status_code": 200},
+            ],
         )
         iibc.wait_for_build(IIBBuildDetailsModel.from_dict(fixture_build_details_json))
 
@@ -280,16 +277,14 @@ def test_iibbuilddetailsmodel(fixture_build_details_json):
 
 
 def test_iibbuilddetails_pager(
-        fixture_builds_page1_json,
-        fixture_builds_page2_json,
-        fixture_build_details_json,
-        fixture_build_details_json2):
+    fixture_builds_page1_json,
+    fixture_builds_page2_json,
+    fixture_build_details_json,
+    fixture_build_details_json2,
+):
     with requests_mock.Mocker() as m:
         m.register_uri(
-            "GET",
-            "/api/v1/builds/",
-            status_code=200,
-            json=fixture_builds_page1_json,
+            "GET", "/api/v1/builds/", status_code=200, json=fixture_builds_page1_json
         )
         m.register_uri(
             "GET",
@@ -307,13 +302,13 @@ def test_iibbuilddetails_pager(
         iibc = IIBClient("fake-host")
         pager = iibc.get_builds()
         assert pager.items() == [
-            IIBBuildDetailsModel.from_dict(fixture_builds_page1_json['items'][0])
+            IIBBuildDetailsModel.from_dict(fixture_builds_page1_json["items"][0])
         ]
         pager.next()
         assert pager.items() == [
-            IIBBuildDetailsModel.from_dict(fixture_builds_page2_json['items'][0])
+            IIBBuildDetailsModel.from_dict(fixture_builds_page2_json["items"][0])
         ]
         pager.prev()
         assert pager.items() == [
-            IIBBuildDetailsModel.from_dict(fixture_builds_page1_json['items'][0])
+            IIBBuildDetailsModel.from_dict(fixture_builds_page1_json["items"][0])
         ]
