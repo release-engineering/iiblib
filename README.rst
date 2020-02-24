@@ -1,19 +1,18 @@
-========
- iiblib
-========
+iiblib
+======
 
 IIB lib is python IIB client library that allows user to operate with IIB service
 
 
 
 Requirements
-============
+------------
 
 * Python 3.7 over
 * Python 2.7 over
 
 Setup
-=====
+-----
 
 ::
 
@@ -23,7 +22,7 @@ Setup
   (venv)$ python -m pip install iiblib
 
 Usage
-=====
+-----
 
 Basic usage of IIBClient from iiblib is following
 
@@ -37,3 +36,4 @@ Basic usage of IIBClient from iiblib is following
   >>> iibc.wait_for_build(build)
   >>>
   >>> iibc.remove_operators('index_image', 'binary_image', ['operator1'], ['x86_64'])
+
