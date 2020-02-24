@@ -305,7 +305,7 @@ class IIBSession(object):
             requests.Response
         """
 
-        return "https://%s/api/v1/%s/" % (self.hostname, endpoint)
+        return "https://%s/api/v1/%s" % (self.hostname, endpoint)
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
@@ -352,7 +352,7 @@ class IIBClient(object):
 
         resp = self.iib_session.post(
             "builds/add",
-            data={
+            json={
                 "index_image": index_image,
                 "binary_image": binary_image,
                 "bundles": bundles,
@@ -387,7 +387,7 @@ class IIBClient(object):
 
         resp = self.iib_session.post(
             "builds/remove",
-            data={
+            json={
                 "index_image": index_image,
                 "binary_image": binary_image,
                 "operators": operators,
