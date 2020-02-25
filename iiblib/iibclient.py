@@ -28,12 +28,14 @@ class IIBBuildDetailsModel(object):
         from_index,
         from_index_resolved,
         bundles,
-        operators,
+        removed_operators,
+        organization,
         binary_image,
         binary_image_resolved,
         index_image,
         request_type,
         arches,
+        bundle_mapping,
     ):
         """
         Args:
@@ -49,8 +51,10 @@ class IIBBuildDetailsModel(object):
                 Reference of new index image
             bundles (list)
                 List of bundles to be added to index image
-            operators (list)
+            removed_operators (list)
                 List of operators to be removed from index image
+            organization (str)
+                Name of organization to push to in the legacy app registry
             binary_image (str)
                 Reference of binary image used for rebuilding
             binary_image_resolved (str)
@@ -61,6 +65,9 @@ class IIBBuildDetailsModel(object):
                 Type of iib build task (add or remove)
             arches (list)
                 List of archictures supported in new index image
+            bundle_mapping (dict)
+                Operator names in “bundles” map to: list of “bundles” which
+                map to the operator key
         """
         self.id = _id
         self.state = state
@@ -69,12 +76,14 @@ class IIBBuildDetailsModel(object):
         self.from_index = from_index
         self.from_index_resolved = from_index_resolved
         self.bundles = bundles
-        self.operators = operators
+        self.removed_operators = removed_operators
+        self.organization = organization
         self.binary_image = binary_image
         self.binary_image_resolved = binary_image_resolved
         self.index_image = index_image
         self.request_type = request_type
         self.arches = arches
+        self.bundle_mapping = bundle_mapping
 
     @classmethod
     def from_dict(cls, data):
@@ -86,12 +95,14 @@ class IIBBuildDetailsModel(object):
             data["from_index"],
             data["from_index_resolved"],
             data.get("bundles", []),
-            data.get("operators", []),
+            data.get("removed_operators", []),
+            data.get("organization"),
             data["binary_image"],
             data["binary_image_resolved"],
             data["index_image"],
             data["request_type"],
             data["arches"],
+            data["bundle_mapping"],
         )
 
     def __eq__(self, other):
@@ -103,12 +114,14 @@ class IIBBuildDetailsModel(object):
             and self.from_index == other.from_index
             and self.from_index_resolved == other.from_index_resolved
             and self.bundles == other.bundles
-            and self.operators == other.operators
+            and self.removed_operators == other.removed_operators
+            and self.organization == other.organization
             and self.binary_image == other.binary_image
             and self.binary_image_resolved == other.binary_image_resolved
             and self.index_image == other.index_image
             and self.request_type == other.request_type
             and self.arches == other.arches
+            and self.bundle_mapping == other.bundle_mapping
         ):
             return True
         return False
@@ -329,7 +342,16 @@ class IIBClient(object):
         if auth:
             auth.make_auth(self.iib_session)
 
-    def add_bundles(self, index_image, binary_image, bundles, arches, raw=False):
+    def add_bundles(
+            self,
+            index_image,
+            binary_image,
+            bundles,
+            arches,
+            cnr_token=None,
+            organization=None,
+            raw=False
+    ):
         """Rebuild index image with new bundles to be added.
 
         Args:
@@ -341,6 +363,10 @@ class IIBClient(object):
                 List of references to bundle images to be added to index image
             arches (list)
                 List of architectures supported in new index image
+            cnr_token (srt)
+                optional. CNR token.
+            organization (str)
+                optional. Name of the organization in the legacy app registry.
             raw (bool)
                 Return raw json response instead of model instance
 
@@ -353,10 +379,12 @@ class IIBClient(object):
         resp = self.iib_session.post(
             "builds/add",
             json={
-                "index_image": index_image,
+                "from_index": index_image,
                 "binary_image": binary_image,
                 "bundles": bundles,
-                "arches": arches,
+                "add_arches": arches,
+                "cnr_token": cnr_token,
+                "organization": organization,
             },
         )
         resp.raise_for_status()
@@ -364,7 +392,16 @@ class IIBClient(object):
             return resp.json()
         return IIBBuildDetailsModel.from_dict(resp.json())
 
-    def remove_operators(self, index_image, binary_image, operators, arches, raw=False):
+    def remove_operators(
+            self,
+            index_image,
+            binary_image,
+            operators,
+            arches,
+            cnr_token=None,
+            organization=None,
+            raw=False
+    ):
         """Rebuild index image with existing operators to be removed.
 
         Args:
@@ -376,6 +413,10 @@ class IIBClient(object):
                 List of operators to be removed from existing index image
             arches (list)
                 List of architectures supported in new index image
+            cnr_token (srt)
+                optional. CNR token.
+            organization (str)
+                optional. Name of the organization in the legacy app registry.
             raw (bool)
                 Return raw json response instead of model instance
 
@@ -386,12 +427,14 @@ class IIBClient(object):
         """
 
         resp = self.iib_session.post(
-            "builds/remove",
+            "builds/rm",
             json={
-                "index_image": index_image,
+                "from_index": index_image,
                 "binary_image": binary_image,
                 "operators": operators,
-                "arches": arches,
+                "add_arches": arches,
+                "cnr_token": cnr_token,
+                "organization": organization,
             },
         )
         resp.raise_for_status()
