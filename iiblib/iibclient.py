@@ -17,7 +17,7 @@ class IIBAuth(object):
 
 
 class IIBBuildDetailsModel(object):
-    """Model class hodling data about index build task"""
+    """Model class handling data about index build task"""
 
     def __init__(
         self,
@@ -58,13 +58,13 @@ class IIBBuildDetailsModel(object):
             binary_image (str)
                 Reference of binary image used for rebuilding
             binary_image_resolved (str)
-                Checksum refence of binary image that was used for rebuilding
+                Checksum reference of binary image that was used for rebuilding
             index_image (str)
                 Reference of index image to rebuild
             request_type (str)
                 Type of iib build task (add or remove)
             arches (list)
-                List of archictures supported in new index image
+                List of architectures supported in new index image
             bundle_mapping (dict)
                 Operator names in “bundles” map to: list of “bundles” which
                 map to the operator key
