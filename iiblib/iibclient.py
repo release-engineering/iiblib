@@ -343,14 +343,14 @@ class IIBClient(object):
             auth.make_auth(self.iib_session)
 
     def add_bundles(
-            self,
-            index_image,
-            binary_image,
-            bundles,
-            arches,
-            cnr_token=None,
-            organization=None,
-            raw=False
+        self,
+        index_image,
+        binary_image,
+        bundles,
+        arches,
+        cnr_token=None,
+        organization=None,
+        raw=False,
     ):
         """Rebuild index image with new bundles to be added.
 
@@ -393,14 +393,14 @@ class IIBClient(object):
         return IIBBuildDetailsModel.from_dict(resp.json())
 
     def remove_operators(
-            self,
-            index_image,
-            binary_image,
-            operators,
-            arches,
-            cnr_token=None,
-            organization=None,
-            raw=False
+        self,
+        index_image,
+        binary_image,
+        operators,
+        arches,
+        cnr_token=None,
+        organization=None,
+        raw=False,
     ):
         """Rebuild index image with existing operators to be removed.
 
