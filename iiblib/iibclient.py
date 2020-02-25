@@ -39,7 +39,7 @@ class IIBBuildDetailsModel(object):
     ):
         """
         Args:
-            _id (str)
+            _id (int)
                 Id of build
             state (str)
                 State of build
@@ -66,7 +66,7 @@ class IIBBuildDetailsModel(object):
             arches (list)
                 List of architectures supported in new index image
             bundle_mapping (dict)
-                Operator names in “bundles” map to: list of “bundles” which
+                Operator names in "bundles" map to: list of "bundles" which
                 map to the operator key
         """
         self.id = _id
