@@ -157,7 +157,7 @@ class IIBBuildDetailsPager(object):
     def prev(self):
         """Load items for previous page and set it as current"""
 
-        if self.page > 0:
+        if self.page > 1:
             self.page -= 1
         self.reload_page()
 
@@ -442,7 +442,7 @@ class IIBClient(object):
             return resp.json()
         return IIBBuildDetailsModel.from_dict(resp.json())
 
-    def get_builds(self, page=0, raw=False):
+    def get_builds(self, page=1, raw=False):
         """Get all historical builds of index image.
 
         Args:

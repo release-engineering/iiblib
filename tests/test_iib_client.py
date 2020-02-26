@@ -68,7 +68,7 @@ def fixture_builds_page1_json(fixture_build_details_json):
             "first": "",
             "last": "",
             "next": "",
-            "page": 0,
+            "page": 1,
             "pages": 2,
             "per_page": 1,
             "previous": "",
@@ -86,7 +86,7 @@ def fixture_builds_page2_json(fixture_build_details_json2):
             "first": "",
             "last": "",
             "next": "",
-            "page": 1,
+            "page": 2,
             "pages": 2,
             "per_page": 1,
             "previous": "",
@@ -296,13 +296,13 @@ def test_iibbuilddetails_pager(
         )
         m.register_uri(
             "GET",
-            "/api/v1/builds?page=1",
+            "/api/v1/builds?page=2",
             status_code=200,
             json=fixture_builds_page2_json,
         )
         m.register_uri(
             "GET",
-            "/api/v1/builds?page=0",
+            "/api/v1/builds?page=1",
             status_code=200,
             json=fixture_builds_page1_json,
         )
