@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [0.2.0] - 2020-02-26
+
+### Fixed
+
+- Fixed incompatibilities with IIB
 
 ## [0.1.0] - 2020-02-21
 
