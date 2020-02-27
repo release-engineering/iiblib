@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [0.4.0] - 2020-02-27
+
+### Fixed
+
+- make client compatible with upstream IIB
+
 ## [0.3.0] - 2020-02-27
 
 ### Fixed
