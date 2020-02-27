@@ -210,39 +210,41 @@ class IIBKrbAuth(IIBAuth):
     """Kerberos authentication support for IIBClient"""
 
     # pylint: disable=super-init-not-called
-    def __init__(self, service_name, ktfile=None):
+    def __init__(self, krb_name, ktfile=None, gssapi_name_type=gssapi.NameType.user):
         """
         Args:
-            service_name (str)
-                Kerberos service name
+            krb_name (str)
+                Kerberos name for obtaining ticket
             ktfile (str)
                 Kerberos client keytab file
+            gssapi_name_type (str)
+                GSSAPI name type for creating credentials
         """
-        self.service_name = service_name
+        self.krb_name = krb_name
         self.ktfile = ktfile
+        self.gssapi_name_type = gssapi_name_type
 
     def _krb_auth_header(self):
-        name = gssapi.Name(
-            "%s" % (self.service_name,), gssapi.NameType.hostbased_service
-        )
+        name = gssapi.Name(base=self.krb_name, name_type=self.gssapi_name_type)
         store = None
         if self.ktfile:
             store = {"client_keytab": "FILE:%s" % self.ktfile}
 
-        creds = gssapi.Credentials(name=name, usage="initiate", store=store)
+        creds = gssapi.Credentials.acquire(name, usage="initiate", store=store)
+
         gssapi_auth = HTTPSPNEGOAuth(creds=creds)
         return gssapi_auth
 
     def make_auth(self, iib_session):
         """Setup IIBSession with kerberos authentication"""
-        iib_session.session.headers.update({"auth": self._krb_auth_header()})
+        iib_session.session.auth = self._krb_auth_header()
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
 class IIBSession(object):
     """Helper class to support iib requests and authentication"""
 
-    def __init__(self, hostname, retries=3):
+    def __init__(self, hostname, retries=3, verify=True):
         """
         Args:
             hostname (str)
@@ -252,6 +254,7 @@ class IIBSession(object):
         """
         self.session = requests.Session()
         self.hostname = hostname
+        self.verify = verify
 
         retry = Retry(
             total=retries, read=retries, connect=retries, status_forcelist=[500]
@@ -270,7 +273,7 @@ class IIBSession(object):
             requests.Response
         """
 
-        return self.session.get(self._api_url(endpoint), **kwargs)
+        return self.session.get(self._api_url(endpoint), verify=self.verify, **kwargs)
 
     def post(self, endpoint, **kwargs):
         """HTTP post request against ibb server API
@@ -282,7 +285,7 @@ class IIBSession(object):
             requests.Response
         """
 
-        return self.session.post(self._api_url(endpoint), **kwargs)
+        return self.session.post(self._api_url(endpoint), verify=self.verify, **kwargs)
 
     def put(self, endpoint, **kwargs):
         """HTTP put request against ibb server API
@@ -294,7 +297,7 @@ class IIBSession(object):
             requests.Response
         """
 
-        return self.session.put(self._api_url(endpoint), **kwargs)
+        return self.session.put(self._api_url(endpoint), verify=self.verify, **kwargs)
 
     def delete(self, endpoint, **kwargs):
         """HTTP delete request against ibb server API
@@ -306,7 +309,9 @@ class IIBSession(object):
             requests.Response
         """
 
-        return self.session.delete(self._api_url(endpoint), **kwargs)
+        return self.session.delete(
+            self._api_url(endpoint), verify=self.verify, **kwargs
+        )
 
     def _api_url(self, endpoint):
         """Kerberos authentication support for IIBClient
@@ -325,7 +330,9 @@ class IIBSession(object):
 class IIBClient(object):
     """IIB requests wrapper"""
 
-    def __init__(self, hostname, retries=3, auth=None, poll_interval=30):
+    def __init__(
+        self, hostname, retries=3, auth=None, poll_interval=30, ssl_verify=True
+    ):
         """
         Args:
             hostname (str)
@@ -337,7 +344,7 @@ class IIBClient(object):
             poll_interval (int)
                 number of seconds to wait before fetching new status of task in wait_for_task
         """
-        self.iib_session = IIBSession(hostname, retries=retries)
+        self.iib_session = IIBSession(hostname, retries=retries, verify=ssl_verify)
         self.poll_interval = poll_interval
         if auth:
             auth.make_auth(self.iib_session)
