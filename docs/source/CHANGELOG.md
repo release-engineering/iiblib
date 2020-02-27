@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [0.3.0] - 2020-02-27
+
+### Fixed
+
+- Fixed kerberos auth
+- added way how to configure insecure ssl connection to IIB
+
 ## [0.2.0] - 2020-02-26
 
 ### Fixed
