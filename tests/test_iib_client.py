@@ -107,10 +107,18 @@ def test_iib_session_methods(patched_delete, patched_put, patched_post, patched_
     iibs.put("fake-end-point")
     iibs.delete("fake-end-point")
 
-    patched_get.assert_called_with("https://fake-host/api/v1/fake-end-point")
-    patched_post.assert_called_with("https://fake-host/api/v1/fake-end-point")
-    patched_put.assert_called_with("https://fake-host/api/v1/fake-end-point")
-    patched_delete.assert_called_with("https://fake-host/api/v1/fake-end-point")
+    patched_get.assert_called_with(
+        "https://fake-host/api/v1/fake-end-point", verify=True
+    )
+    patched_post.assert_called_with(
+        "https://fake-host/api/v1/fake-end-point", verify=True
+    )
+    patched_put.assert_called_with(
+        "https://fake-host/api/v1/fake-end-point", verify=True
+    )
+    patched_delete.assert_called_with(
+        "https://fake-host/api/v1/fake-end-point", verify=True
+    )
 
 
 def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
@@ -213,15 +221,14 @@ def test_iib_basic_auth():
     "gssapi.Credentials",
     __init__=MagicMock(return_value=None),
     __new__=MagicMock(return_value=None),
+    acquire=MagicMock(return_value=None),
 )
 def test_iib_krb_auth():
     session = MagicMock()
     session.session.headers = {}
     auth = IIBKrbAuth("test_principal")
     auth.make_auth(session)
-    assert isinstance(
-        session.session.headers["auth"], requests_gssapi.gssapi_.HTTPSPNEGOAuth
-    )
+    assert isinstance(session.session.auth, requests_gssapi.gssapi_.HTTPSPNEGOAuth)
 
 
 @pytest.mark.xfail
