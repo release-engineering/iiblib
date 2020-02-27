@@ -393,14 +393,7 @@ class IIBClient(object):
         return IIBBuildDetailsModel.from_dict(resp.json())
 
     def remove_operators(
-        self,
-        index_image,
-        binary_image,
-        operators,
-        arches,
-        cnr_token=None,
-        organization=None,
-        raw=False,
+        self, index_image, binary_image, operators, arches, raw=False,
     ):
         """Rebuild index image with existing operators to be removed.
 
@@ -413,10 +406,6 @@ class IIBClient(object):
                 List of operators to be removed from existing index image
             arches (list)
                 List of architectures supported in new index image
-            cnr_token (srt)
-                optional. CNR token.
-            organization (str)
-                optional. Name of the organization in the legacy app registry.
             raw (bool)
                 Return raw json response instead of model instance
 
@@ -433,8 +422,6 @@ class IIBClient(object):
                 "binary_image": binary_image,
                 "operators": operators,
                 "add_arches": arches,
-                "cnr_token": cnr_token,
-                "organization": organization,
             },
         )
         resp.raise_for_status()
