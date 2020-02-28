@@ -146,6 +146,14 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
         assert iibc.add_bundles(
             "index-image", "binary", ["bundles-map"], []
         ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        assert iibc.add_bundles(
+            "index-image",
+            "binary",
+            ["bundles-map"],
+            [],
+            cnr_token="cnr",
+            organization="org",
+        ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
         assert (
             iibc.add_bundles("index-image", "binary", ["bundles-map"], [], raw=True)
             == fixture_build_details_json

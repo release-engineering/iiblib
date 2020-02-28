@@ -383,17 +383,20 @@ class IIBClient(object):
               return IIBBuildDetailsModel instance.
         """
 
-        resp = self.iib_session.post(
-            "builds/add",
-            json={
-                "from_index": index_image,
-                "binary_image": binary_image,
-                "bundles": bundles,
-                "add_arches": arches,
-                "cnr_token": cnr_token,
-                "organization": organization,
-            },
-        )
+        post_data = {
+            "from_index": index_image,
+            "binary_image": binary_image,
+            "bundles": bundles,
+            "add_arches": arches,
+        }
+
+        if cnr_token:
+            post_data["cnr_token"] = cnr_token
+
+        if organization:
+            post_data["organization"] = organization
+
+        resp = self.iib_session.post("builds/add", json=post_data)
         resp.raise_for_status()
         if raw:
             return resp.json()
