@@ -62,7 +62,7 @@ if os.environ.get("READTHEDOCS", None):
 
 setup(
     name="iiblib",
-    version="0.4.0",
+    version="0.5.0",
     description="IIB client library",
     long_description=long_description,
     author="Jindrich Luza",
