@@ -91,7 +91,7 @@ class IIBBuildDetailsModel(object):
             data["id"],
             data["state"],
             data["state_reason"],
-            data["state_history"],
+            data.get("state_history", []),
             data["from_index"],
             data["from_index_resolved"],
             data.get("bundles", []),
