@@ -230,7 +230,7 @@ class IIBKrbAuth(IIBAuth):
         if self.ktfile:
             store = {"client_keytab": "FILE:%s" % self.ktfile}
 
-        creds = gssapi.Credentials.acquire(name, usage="initiate", store=store)
+        creds = gssapi.Credentials(name=name, usage="initiate", store=store)
 
         gssapi_auth = HTTPSPNEGOAuth(creds=creds)
         return gssapi_auth
