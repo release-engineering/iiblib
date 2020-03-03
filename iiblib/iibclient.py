@@ -1,10 +1,10 @@
 import time
+import os
 
-import gssapi
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from requests_gssapi import HTTPSPNEGOAuth
+from requests_kerberos import HTTPKerberosAuth, OPTIONAL
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
@@ -210,30 +210,31 @@ class IIBKrbAuth(IIBAuth):
     """Kerberos authentication support for IIBClient"""
 
     # pylint: disable=super-init-not-called
-    def __init__(self, krb_name, ktfile=None, gssapi_name_type=gssapi.NameType.user):
+    def __init__(self, krb_princ, ktfile=None):
         """
         Args:
-            krb_name (str)
-                Kerberos name for obtaining ticket
+            krb_princ (str)
+                Kerberos principal for obtaining ticket
             ktfile (str)
                 Kerberos client keytab file
             gssapi_name_type (str)
                 GSSAPI name type for creating credentials
         """
-        self.krb_name = krb_name
+        self.krb_princ = krb_princ
         self.ktfile = ktfile
-        self.gssapi_name_type = gssapi_name_type
 
     def _krb_auth_header(self):
-        name = gssapi.Name(base=self.krb_name, name_type=self.gssapi_name_type)
-        store = None
         if self.ktfile:
-            store = {"client_keytab": "FILE:%s" % self.ktfile}
+            old_kt_file = os.environ.get("KRB5_CLIENT_KTNAME")
+        try:
+            auth = HTTPKerberosAuth(
+                mutual_authentication=OPTIONAL, principal=self.krb_princ
+            )
+        finally:
+            if self.ktfile:
+                os.environ["KRB5_CLIENT_KTNAME"] = old_kt_file or ""
 
-        creds = gssapi.Credentials(name=name, usage="initiate", store=store)
-
-        gssapi_auth = HTTPSPNEGOAuth(creds=creds)
-        return gssapi_auth
+        return auth
 
     def make_auth(self, iib_session):
         """Setup IIBSession with kerberos authentication"""
@@ -402,9 +403,7 @@ class IIBClient(object):
             return resp.json()
         return IIBBuildDetailsModel.from_dict(resp.json())
 
-    def remove_operators(
-        self, index_image, binary_image, operators, arches, raw=False,
-    ):
+    def remove_operators(self, index_image, binary_image, operators, arches, raw=False):
         """Rebuild index image with existing operators to be removed.
 
         Args:
