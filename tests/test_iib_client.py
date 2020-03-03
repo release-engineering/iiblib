@@ -13,7 +13,7 @@ from iiblib.iibclient import (
 
 import pytest
 import requests_mock
-import requests_gssapi.gssapi_
+import requests_kerberos
 
 
 @pytest.fixture
@@ -218,25 +218,12 @@ def test_iib_basic_auth():
     assert session.session.headers["auth"] == ("foo", "bar")
 
 
-@patch.multiple(
-    "gssapi.SecurityContext",
-    complete=True,
-    __init__=MagicMock(return_value=None),
-    step=MagicMock(return_value=b"STOKEN"),
-    initiator_name="foo@EXAMPLE.ORG",
-)
-@patch.multiple(
-    "gssapi.Credentials",
-    __init__=MagicMock(return_value=None),
-    __new__=MagicMock(return_value=None),
-    acquire=MagicMock(return_value=None),
-)
 def test_iib_krb_auth():
     session = MagicMock()
     session.session.headers = {}
-    auth = IIBKrbAuth("test_principal")
+    auth = IIBKrbAuth("test_principal", ktfile="/some/kt/file")
     auth.make_auth(session)
-    assert isinstance(session.session.auth, requests_gssapi.gssapi_.HTTPSPNEGOAuth)
+    assert isinstance(session.session.auth, requests_kerberos.HTTPKerberosAuth)
 
 
 @pytest.mark.xfail
