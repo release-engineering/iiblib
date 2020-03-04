@@ -1,5 +1,5 @@
 import copy
-from mock import patch, MagicMock
+from mock import patch, MagicMock, call
 
 from iiblib.iibclient import (
     IIBBuildDetailsModel,
@@ -218,12 +218,29 @@ def test_iib_basic_auth():
     assert session.session.headers["auth"] == ("foo", "bar")
 
 
-def test_iib_krb_auth():
+@patch("subprocess.Popen")
+@patch("kerberos.authGSSClientStep")
+@patch("kerberos.authGSSClientResponse")
+@patch("kerberos.authGSSClientInit")
+def test_iib_krb_auth(
+    mocked_auth_gss_client_init,
+    mocked_auth_gss_client_response,
+    mocked_auth_gss_client_step,
+    mocked_popen,
+):
+    mocked_auth_gss_client_init.return_value = ("", None)
+    mocked_auth_gss_client_response.return_value = ""
     session = MagicMock()
     session.session.headers = {}
-    auth = IIBKrbAuth("test_principal", ktfile="/some/kt/file")
+    auth = IIBKrbAuth("test_principal", "someservice")
     auth.make_auth(session)
-    assert isinstance(session.session.auth, requests_kerberos.HTTPKerberosAuth)
+    mocked_auth_gss_client_init.assert_called_with("HTTP@someservice")
+    print(mocked_popen.mock_calls)
+    mocked_popen.assert_has_calls([call(["klist"], stderr=-1, stdout=-1)])
+
+    auth = IIBKrbAuth("test_principal", "someservice", ktfile="/some/kt/file")
+    auth.make_auth(session)
+    mocked_auth_gss_client_init.assert_called_with("HTTP@someservice")
 
 
 @pytest.mark.xfail

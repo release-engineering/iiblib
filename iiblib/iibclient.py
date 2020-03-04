@@ -1,6 +1,9 @@
 import time
 import os
+import subprocess
+import tempfile
 
+import kerberos
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
@@ -210,7 +213,7 @@ class IIBKrbAuth(IIBAuth):
     """Kerberos authentication support for IIBClient"""
 
     # pylint: disable=super-init-not-called
-    def __init__(self, krb_princ, ktfile=None):
+    def __init__(self, krb_princ, service, ktfile=None):
         """
         Args:
             krb_princ (str)
@@ -222,23 +225,38 @@ class IIBKrbAuth(IIBAuth):
         """
         self.krb_princ = krb_princ
         self.ktfile = ktfile
+        self.service = service
 
     def _krb_auth_header(self):
-        if self.ktfile:
-            old_kt_file = os.environ.get("KRB5_CLIENT_KTNAME")
+        retcode = subprocess.Popen(
+            ["klist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
+        ).wait()
+        krb5ccname = None
+        if retcode or self.ktfile:
+            old_krb5ccname = os.environ.get("KRB5CCNAME", "")
+            _, krb5ccname = tempfile.mkstemp(prefix="krb5cc")
+            retcode = subprocess.Popen(
+                ["kinit", self.krb_princ, "-k", "-t", self.ktfile, "-c", krb5ccname],
+                stdout=subprocess.PIPE,
+                stderr=subprocess.PIPE,
+            ).wait()
         try:
-            auth = HTTPKerberosAuth(
-                mutual_authentication=OPTIONAL, principal=self.krb_princ
-            )
+            if krb5ccname:
+                os.environ["KRB5CCNAME"] = krb5ccname
+            __, krb_context = kerberos.authGSSClientInit("HTTP@%s" % self.service)
+            kerberos.authGSSClientStep(krb_context, "")
+            self._krb_context = krb_context
+            auth_header = "Negotiate " + kerberos.authGSSClientResponse(krb_context)
         finally:
-            if self.ktfile:
-                os.environ["KRB5_CLIENT_KTNAME"] = old_kt_file or ""
+            if krb5ccname:
+                os.environ["KRB5CCNAME"] = old_krb5ccname
+                os.unlink(krb5ccname)
 
-        return auth
+        return auth_header
 
     def make_auth(self, iib_session):
         """Setup IIBSession with kerberos authentication"""
-        iib_session.session.auth = self._krb_auth_header()
+        iib_session.session.headers["Authorization"] = self._krb_auth_header()
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
