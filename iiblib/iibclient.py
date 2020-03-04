@@ -1,13 +1,18 @@
-import time
 import os
 import subprocess
 import tempfile
+import time
 
 import kerberos
 import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
-from requests_kerberos import HTTPKerberosAuth, OPTIONAL
+
+
+class IIBException(Exception):
+    """ General IIB exception"""
+
+    pass
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
@@ -387,6 +392,31 @@ class IIBClient(object):
         if auth:
             auth.make_auth(self.iib_session)
 
+    @staticmethod
+    def _check_response(response):
+        """
+        Checks response for status and raises IIBException in case of error
+
+        Args:
+            response (requests.Response) response which will be checked for status
+
+        Raises:
+            IIBException when any error occurs
+        """
+        if response.status_code >= 400:
+            try:
+                resp_error = response.json().get("error")
+                if resp_error:
+                    # raise exception only if error is specified
+                    raise IIBException(resp_error)
+
+            except ValueError:
+                pass
+
+            # check status in case no error is specified or response
+            # does not contain valid json
+            response.raise_for_status()
+
     def add_bundles(
         self,
         index_image,
@@ -435,7 +465,8 @@ class IIBClient(object):
             post_data["organization"] = organization
 
         resp = self.iib_session.post("builds/add", json=post_data)
-        resp.raise_for_status()
+        self._check_response(resp)
+
         if raw:
             return resp.json()
         return IIBBuildDetailsModel.from_dict(resp.json())
@@ -470,7 +501,8 @@ class IIBClient(object):
                 "add_arches": arches,
             },
         )
-        resp.raise_for_status()
+
+        self._check_response(resp)
         if raw:
             return resp.json()
         return IIBBuildDetailsModel.from_dict(resp.json())
@@ -491,7 +523,8 @@ class IIBClient(object):
         """
 
         resp = self.iib_session.get("builds", params={"page": page})
-        resp.raise_for_status()
+        self._check_response(resp)
+
         if raw:
             return resp.json()
         return IIBBuildDetailsPager.from_dict(self, resp.json())
@@ -512,7 +545,8 @@ class IIBClient(object):
         """
 
         resp = self.iib_session.get("builds/%s" % bid)
-        resp.raise_for_status()
+        self._check_response(resp)
+
         if raw:
             return resp.json()
         return IIBBuildDetailsModel.from_dict(resp.json())
