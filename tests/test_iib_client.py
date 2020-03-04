@@ -235,7 +235,6 @@ def test_iib_krb_auth(
     auth = IIBKrbAuth("test_principal", "someservice")
     auth.make_auth(session)
     mocked_auth_gss_client_init.assert_called_with("HTTP@someservice")
-    print(mocked_popen.mock_calls)
     mocked_popen.assert_has_calls([call(["klist"], stderr=-1, stdout=-1)])
 
     auth = IIBKrbAuth("test_principal", "someservice", ktfile="/some/kt/file")
@@ -301,6 +300,10 @@ def test_iibbuilddetailsmodel(fixture_build_details_json):
     model = IIBBuildDetailsModel.from_dict(fixture_build_details_json)
     assert model == expected_model
     assert model != unexpected_model
+
+    model = IIBBuildDetailsModel.from_dict(fixture_build_details_json).to_dict()
+    assert model == expected_model.to_dict()
+    assert model != unexpected_model.to_dict()
 
 
 def test_iibbuilddetails_pager(
