@@ -1,5 +1,6 @@
 import copy
 from mock import patch, MagicMock, call
+from requests import HTTPError
 
 from iiblib.iibclient import (
     IIBBuildDetailsModel,
@@ -9,6 +10,7 @@ from iiblib.iibclient import (
     IIBKrbAuth,
     IIBClient,
     IIBSession,
+    IIBException,
 )
 
 import pytest
@@ -342,3 +344,31 @@ def test_iibbuilddetails_pager(
         assert pager.items() == [
             IIBBuildDetailsModel.from_dict(fixture_builds_page1_json["items"][0])
         ]
+
+
+def test_http_error_response():
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "GET",
+            "/api/v1/builds",
+            status_code=400,
+            text="An ugly HTTP error has occurred!",
+        )
+
+        iibc = IIBClient("fake-host")
+        with pytest.raises(HTTPError):
+            iibc.get_builds()
+
+
+def test_iib_error_response():
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "GET",
+            "/api/v1/builds",
+            status_code=400,
+            json={"error": "An ugly error has occurred!"},
+        )
+
+        iibc = IIBClient("fake-host")
+        with pytest.raises(IIBException):
+            iibc.get_builds()
