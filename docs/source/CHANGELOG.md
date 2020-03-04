@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [0.6.0] - 2020-03-01
+
+### Fixed
+
+- requests-gssapi replaced with requests-kerberos
+
+## [0.5.0] - 2020-02-29
+
+### Fixed
+
+- kerberos auth fixed
+
 ## [0.4.0] - 2020-02-27
 
 ### Fixed
