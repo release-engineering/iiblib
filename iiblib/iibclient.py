@@ -108,6 +108,25 @@ class IIBBuildDetailsModel(object):
             data["bundle_mapping"],
         )
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "state": self.state,
+            "state_reason": self.reason,
+            "state_history": self.state_history,
+            "from_index": self.from_index,
+            "from_index_resolved": self.from_index,
+            "bundles": self.bundles,
+            "removed_operators": self.removed_operators,
+            "organization": self.organization,
+            "binary_image": self.binary_image,
+            "binary_image_resolved": self.binary_image_resolved,
+            "index_image": self.index_image,
+            "request_type": self.request_type,
+            "arches": self.arches,
+            "bundle_mapping": self.bundle_mapping,
+        }
+
     def __eq__(self, other):
         if (
             self.id == other.id
