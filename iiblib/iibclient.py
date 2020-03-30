@@ -425,6 +425,7 @@ class IIBClient(object):
         arches,
         cnr_token=None,
         organization=None,
+        overwrite_from_index=False,
         raw=False,
     ):
         """Rebuild index image with new bundles to be added.
@@ -456,6 +457,7 @@ class IIBClient(object):
             "binary_image": binary_image,
             "bundles": bundles,
             "add_arches": arches,
+            "overwrite_from_index": overwrite_from_index,
         }
 
         if cnr_token:
@@ -471,7 +473,15 @@ class IIBClient(object):
             return resp.json()
         return IIBBuildDetailsModel.from_dict(resp.json())
 
-    def remove_operators(self, index_image, binary_image, operators, arches, raw=False):
+    def remove_operators(
+        self,
+        index_image,
+        binary_image,
+        operators,
+        arches,
+        overwrite_from_index=False,
+        raw=False,
+    ):
         """Rebuild index image with existing operators to be removed.
 
         Args:
@@ -499,6 +509,7 @@ class IIBClient(object):
                 "binary_image": binary_image,
                 "operators": operators,
                 "add_arches": arches,
+                "overwrite_from_index": overwrite_from_index,
             },
         )
 
