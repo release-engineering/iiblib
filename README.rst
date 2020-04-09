@@ -31,9 +31,9 @@ Basic usage of IIBClient from iiblib is following
   $ python
   >>> from iiblib.iibclient import IIBClient, IIBKrbAuth
   >>> krbauth = IIBKrbAuth()
-  >>> iibc = IIBClient('iib-host', krbauth)
-  >>> build iibc.add_bundles('index_image', 'binary_image', ['bundle1','bundle2'], ['x86_64'])
+  >>> iibc = IIBClient('iib-host', auth=krbauth)
+  >>> build = iibc.add_bundles('index_image', 'binary_image', ['bundle1','bundle2'], ['amd64'])
   >>> iibc.wait_for_build(build)
   >>>
-  >>> iibc.remove_operators('index_image', 'binary_image', ['operator1'], ['x86_64'])
+  >>> iibc.remove_operators('index_image', 'binary_image', ['operator1'], ['amd64'])
 
