@@ -244,6 +244,42 @@ def test_iib_krb_auth(
     mocked_auth_gss_client_init.assert_called_with("HTTP@someservice")
 
 
+@patch("os.unlink")
+@patch("tempfile.mkstemp")
+@patch("subprocess.Popen.wait")
+@patch("subprocess.Popen")
+@patch("kerberos.authGSSClientStep")
+@patch("kerberos.authGSSClientResponse")
+@patch("kerberos.authGSSClientInit")
+def test_iib_krb_auth_no_keytab(
+    mocked_auth_gss_client_init,
+    mocked_auth_gss_client_response,
+    mocked_auth_gss_client_step,
+    mocked_popen,
+    mocked_popen_wait,
+    mocked_mkstemp,
+    mocked_os_unlink,
+):
+    mocked_mkstemp.return_value = (None, "/tmp/krb5ccomuHss")
+    mocked_popen_wait.side_effect = [1, 0]
+    mocked_auth_gss_client_init.return_value = ("", None)
+    mocked_auth_gss_client_response.return_value = ""
+    session = MagicMock()
+    session.session.headers = {}
+    auth = IIBKrbAuth("test_principal", "someservice")
+    auth.make_auth(session)
+    mocked_auth_gss_client_init.assert_called_with("HTTP@someservice")
+    mocked_popen.assert_has_calls(
+        [
+            call(
+                ["kinit", "test_principal", "-k", "-c", "/tmp/krb5ccomuHss"],
+                stderr=-1,
+                stdout=-1,
+            )
+        ]
+    )
+
+
 @pytest.mark.xfail
 def test_health():
     iibc = IIBClient("fake-host")

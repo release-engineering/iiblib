@@ -259,11 +259,27 @@ class IIBKrbAuth(IIBAuth):
         if retcode or self.ktfile:
             old_krb5ccname = os.environ.get("KRB5CCNAME", "")
             _, krb5ccname = tempfile.mkstemp(prefix="krb5cc")
-            retcode = subprocess.Popen(
-                ["kinit", self.krb_princ, "-k", "-t", self.ktfile, "-c", krb5ccname],
-                stdout=subprocess.PIPE,
-                stderr=subprocess.PIPE,
-            ).wait()
+            if self.ktfile:
+                retcode = subprocess.Popen(
+                    [
+                        "kinit",
+                        self.krb_princ,
+                        "-k",
+                        "-t",
+                        self.ktfile,
+                        "-c",
+                        krb5ccname,
+                    ],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                ).wait()
+            else:
+                # If keytab path wasn't provided, default location will be attempted
+                retcode = subprocess.Popen(
+                    ["kinit", self.krb_princ, "-k", "-c", krb5ccname],
+                    stdout=subprocess.PIPE,
+                    stderr=subprocess.PIPE,
+                ).wait()
         try:
             if krb5ccname:
                 os.environ["KRB5CCNAME"] = krb5ccname
