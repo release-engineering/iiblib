@@ -1,0 +1,6 @@
+.coverage
+.tox/*
+docs/build/*
+htmlcov/*
+iiblib.egg-info/*
+*.pyc
