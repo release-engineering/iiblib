@@ -442,6 +442,7 @@ class IIBClient(object):
         cnr_token=None,
         organization=None,
         overwrite_from_index=False,
+        overwrite_from_index_token=None,
         raw=False,
     ):
         """Rebuild index image with new bundles to be added.
@@ -459,6 +460,14 @@ class IIBClient(object):
                 optional. CNR token.
             organization (str)
                 optional. Name of the organization in the legacy app registry.
+            overwrite_from_index (bool)
+                optional. Indicates if resulting index_image needs to be
+                overwritten at the location of from_index. If this is provided,
+                overwrite_from_index_token needs to be specified too.
+            overwrite_from_index_token (str)
+                optional. Token of the destination registry repo where the
+                resulting index image built by IIB has to be overwritten. If
+                this is provided, overwrite_from_index must be set to True.
             raw (bool)
                 Return raw json response instead of model instance
 
@@ -473,7 +482,6 @@ class IIBClient(object):
             "binary_image": binary_image,
             "bundles": bundles,
             "add_arches": arches,
-            "overwrite_from_index": overwrite_from_index,
         }
 
         if cnr_token:
@@ -481,6 +489,21 @@ class IIBClient(object):
 
         if organization:
             post_data["organization"] = organization
+
+        if overwrite_from_index:
+            if overwrite_from_index_token:
+                post_data["overwrite_from_index"] = overwrite_from_index
+                post_data["overwrite_from_index_token"] = overwrite_from_index_token
+            else:
+                raise ValueError(
+                    "Either both or neither of overwrite-from-index and "
+                    "overwrite-from-index-token should be specified."
+                )
+        elif overwrite_from_index_token:
+            raise ValueError(
+                "Either both or neither of overwrite-from-index and "
+                "overwrite-from-index-token should be specified."
+            )
 
         resp = self.iib_session.post("builds/add", json=post_data)
         self._check_response(resp)
@@ -496,6 +519,7 @@ class IIBClient(object):
         operators,
         arches,
         overwrite_from_index=False,
+        overwrite_from_index_token=None,
         raw=False,
     ):
         """Rebuild index image with existing operators to be removed.
@@ -509,6 +533,14 @@ class IIBClient(object):
                 List of operators to be removed from existing index image
             arches (list)
                 List of architectures supported in new index image
+            overwrite_from_index (bool)
+                optional. Indicates if resulting index_image needs to be
+                overwritten at the location of from_index. If this is provided,
+                overwrite_from_index_token needs to be specified too.
+            overwrite_from_index_token (str)
+                optional. Token of the destination registry repo where the
+                resulting index image built by IIB has to be overwritten. If
+                this is provided, overwrite_from_index must be set to True.
             raw (bool)
                 Return raw json response instead of model instance
 
@@ -517,19 +549,31 @@ class IIBClient(object):
               if raw == True return dict with json response otherwise
               return IIBBuildDetailsModel instance.
         """
+        post_data = {
+            "from_index": index_image,
+            "binary_image": binary_image,
+            "operators": operators,
+            "add_arches": arches,
+        }
 
-        resp = self.iib_session.post(
-            "builds/rm",
-            json={
-                "from_index": index_image,
-                "binary_image": binary_image,
-                "operators": operators,
-                "add_arches": arches,
-                "overwrite_from_index": overwrite_from_index,
-            },
-        )
+        if overwrite_from_index:
+            if overwrite_from_index_token:
+                post_data["overwrite_from_index"] = overwrite_from_index
+                post_data["overwrite_from_index_token"] = overwrite_from_index_token
+            else:
+                raise ValueError(
+                    "Either both or neither of overwrite-from-index and "
+                    "overwrite-from-index-token should be specified."
+                )
+        elif overwrite_from_index_token:
+            raise ValueError(
+                "Either both or neither of overwrite-from-index and "
+                "overwrite-from-index-token should be specified."
+            )
 
+        resp = self.iib_session.post("builds/rm", json=post_data)
         self._check_response(resp)
+
         if raw:
             return resp.json()
         return IIBBuildDetailsModel.from_dict(resp.json())
