@@ -155,13 +155,20 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
             [],
             cnr_token="cnr",
             organization="org",
+            overwrite_from_index=True,
+            overwrite_from_index_token="str",
         ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
         assert (
             iibc.add_bundles("index-image", "binary", ["bundles-map"], [], raw=True)
             == fixture_build_details_json
         )
         assert iibc.remove_operators(
-            "index-image", "binary", ["operator1"], []
+            "index-image",
+            "binary",
+            ["operator1"],
+            [],
+            overwrite_from_index=True,
+            overwrite_from_index_token="str",
         ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
         assert (
             iibc.remove_operators("index-image", "binary", ["operator1"], [], raw=True)
@@ -176,6 +183,59 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
             iibc, fixture_builds_page1_json
         )
         assert iibc.get_builds(raw=True) == fixture_builds_page1_json
+
+
+def test_iib_client_failure(fixture_build_details_json):
+    error_msg = (
+        "Either both or neither of overwrite-from-index "
+        "and overwrite-from-index-token should be specified."
+    )
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "POST",
+            "/api/v1/builds/add",
+            status_code=200,
+            json=fixture_build_details_json,
+        )
+        m.register_uri(
+            "POST",
+            "/api/v1/builds/rm",
+            status_code=200,
+            json=fixture_build_details_json,
+        )
+        iibc = IIBClient("fake-host")
+        with pytest.raises(ValueError, match=error_msg):
+            iibc.remove_operators(
+                "index-image", "binary", ["operator1"], [], overwrite_from_index=True,
+            )
+        with pytest.raises(ValueError, match=error_msg):
+            iibc.remove_operators(
+                "index-image",
+                "binary",
+                ["operator1"],
+                [],
+                overwrite_from_index_token="str",
+            )
+        with pytest.raises(ValueError, match=error_msg):
+            iibc.add_bundles(
+                "index-image",
+                "binary",
+                ["bundles-map"],
+                [],
+                cnr_token="cnr",
+                organization="org",
+                overwrite_from_index=True,
+            )
+        with pytest.raises(ValueError, match=error_msg):
+            iibc.add_bundles(
+                "index-image",
+                "binary",
+                ["bundles-map"],
+                [],
+                cnr_token="cnr",
+                organization="org",
+                overwrite_from_index_token="str",
+            )
 
 
 def test_client_wait_for_build(fixture_build_details_json):
