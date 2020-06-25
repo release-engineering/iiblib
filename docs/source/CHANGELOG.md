@@ -9,6 +9,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [0.10.0] - 2020-06-25
+
+### Fixed
+
+- usage in README
+- default location for keytab
+
+### Added
+
+- support for "overwrite-from-index-token" when calling IIB
+
+### Changed
+
+- password-based auth to token by replacing content-delivery-release-bot
+
 ## [0.9.0] - 2020-03-30
 
 ### Added
