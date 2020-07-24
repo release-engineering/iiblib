@@ -1,4 +1,8 @@
 import copy
+
+import pytest
+import requests
+import requests_mock
 from mock import patch, MagicMock, call
 from requests import HTTPError
 
@@ -12,10 +16,6 @@ from iiblib.iibclient import (
     IIBSession,
     IIBException,
 )
-
-import pytest
-import requests_mock
-import requests_kerberos
 
 
 @pytest.fixture
@@ -264,6 +264,33 @@ def test_client_wait_for_build(fixture_build_details_json):
             ],
         )
         iibc.wait_for_build(IIBBuildDetailsModel.from_dict(fixture_build_details_json))
+
+
+def test_client_wait_for_build_retry(fixture_build_details_json):
+    iibc = IIBClient("fake-host.test", poll_interval=1, retries=10, backoff_factor=0)
+
+    with pytest.raises(
+        requests.exceptions.RequestException, match=".*Max retries exceeded*."
+    ):
+        iibc.wait_for_build(IIBBuildDetailsModel.from_dict(fixture_build_details_json))
+
+
+def test_client_wait_for_build_timeout(fixture_build_details_json):
+    # set wait timeout for 2 seconds
+    iibc = IIBClient("fake-host.test", poll_interval=1, wait_for_build_timeout=2)
+
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "GET",
+            "/api/v1/builds/{}".format(fixture_build_details_json["id"]),
+            status_code=200,
+            json=fixture_build_details_json,
+        )
+
+        with pytest.raises(IIBException, match="Timeout*."):
+            iibc.wait_for_build(
+                IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+            )
 
 
 def test_client_auth():
