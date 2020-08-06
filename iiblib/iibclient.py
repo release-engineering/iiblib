@@ -303,20 +303,28 @@ class IIBKrbAuth(IIBAuth):
 class IIBSession(object):
     """Helper class to support iib requests and authentication"""
 
-    def __init__(self, hostname, retries=3, verify=True):
+    def __init__(self, hostname, retries=3, verify=True, backoff_factor=2):
         """
         Args:
             hostname (str)
                 hostname of IIB service
             retries (int)
-                Number of http retries
+                number of http retries
+            verify (bool)
+                enable/disable SSL verification
+            backoff_factor (int)
+                backoff factor to apply between attempts after the second try
         """
         self.session = requests.Session()
         self.hostname = hostname
         self.verify = verify
 
         retry = Retry(
-            total=retries, read=retries, connect=retries, status_forcelist=[500]
+            total=retries,
+            read=retries,
+            connect=retries,
+            backoff_factor=backoff_factor,
+            status_forcelist=set(range(500, 512)),
         )
         adapter = HTTPAdapter(max_retries=retry)
         self.session.mount("http://", adapter)
@@ -390,7 +398,14 @@ class IIBClient(object):
     """IIB requests wrapper"""
 
     def __init__(
-        self, hostname, retries=3, auth=None, poll_interval=30, ssl_verify=True
+        self,
+        hostname,
+        retries=3,
+        auth=None,
+        poll_interval=30,
+        ssl_verify=True,
+        backoff_factor=2,
+        wait_for_build_timeout=7200,
     ):
         """
         Args:
@@ -402,8 +417,17 @@ class IIBClient(object):
                 IIBAuth subclass instance
             poll_interval (int)
                 number of seconds to wait before fetching new status of task in wait_for_task
+            ssl_verify (bool)
+                enable/disable SSL verification
+            backoff_factor (int)
+                backoff factor to apply between attempts after the second try
+            wait_for_build_timeout (int)
+                maximum time which we should wait for build to be completed
         """
-        self.iib_session = IIBSession(hostname, retries=retries, verify=ssl_verify)
+        self.iib_session = IIBSession(
+            hostname, retries=retries, verify=ssl_verify, backoff_factor=backoff_factor
+        )
+        self.wait_for_build_timeout = wait_for_build_timeout
         self.poll_interval = poll_interval
         if auth:
             auth.make_auth(self.iib_session)
@@ -628,12 +652,19 @@ class IIBClient(object):
         Args:
             build (IIBBuildDetailsModel)
                 Instance of `IIBBuildDetailsModel` class
+        Raises:
+            IIBException when timeout for get build from IIB was reached
         """
-
+        timeout = time.time() + self.wait_for_build_timeout
         while True:
             build_details = self.get_build(build.id)
             if build_details.state in ("complete", "failed"):
                 return build_details
+            if time.time() >= timeout:
+                raise IIBException(
+                    "Timeout reached. Build request %s was not processed in %d seconds."
+                    % (build.id, self.wait_for_build_timeout),
+                )
             time.sleep(self.poll_interval)
 
     def rebuild_index(self, index_image):
