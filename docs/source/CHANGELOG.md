@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [0.11.0] - 2020-07-06
+
+### Added
+
+ - timout for getting build in final state (default 2 hours)
+ - backoff factor for retrying data from API 
+  
+### Changed
+
+ - retry is now triggered for all 5xx HTTP status codes (500-511)
+
 ## [0.10.0] - 2020-06-25
 
 ### Fixed
