@@ -148,28 +148,34 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
         assert iibc.add_bundles(
             "index-image", "binary", ["bundles-map"], []
         ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
-        assert iibc.add_bundles(
-            "index-image",
-            "binary",
-            ["bundles-map"],
-            [],
-            cnr_token="cnr",
-            organization="org",
-            overwrite_from_index=True,
-            overwrite_from_index_token="str",
-        ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        assert (
+            iibc.add_bundles(
+                "index-image",
+                "binary",
+                ["bundles-map"],
+                [],
+                cnr_token="cnr",
+                organization="org",
+                overwrite_from_index=True,
+                overwrite_from_index_token="str",
+            )
+            == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        )
         assert (
             iibc.add_bundles("index-image", "binary", ["bundles-map"], [], raw=True)
             == fixture_build_details_json
         )
-        assert iibc.remove_operators(
-            "index-image",
-            "binary",
-            ["operator1"],
-            [],
-            overwrite_from_index=True,
-            overwrite_from_index_token="str",
-        ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        assert (
+            iibc.remove_operators(
+                "index-image",
+                "binary",
+                ["operator1"],
+                [],
+                overwrite_from_index=True,
+                overwrite_from_index_token="str",
+            )
+            == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        )
         assert (
             iibc.remove_operators("index-image", "binary", ["operator1"], [], raw=True)
             == fixture_build_details_json
@@ -206,7 +212,11 @@ def test_iib_client_failure(fixture_build_details_json):
         iibc = IIBClient("fake-host")
         with pytest.raises(ValueError, match=error_msg):
             iibc.remove_operators(
-                "index-image", "binary", ["operator1"], [], overwrite_from_index=True,
+                "index-image",
+                "binary",
+                ["operator1"],
+                [],
+                overwrite_from_index=True,
             )
         with pytest.raises(ValueError, match=error_msg):
             iibc.remove_operators(
