@@ -36,6 +36,7 @@ def fixture_build_details_json():
         "request_type": "request_type",
         "arches": ["x86_64"],
         "bundle_mapping": {"bundle_mapping": "map"},
+        "omps_operator_version": {"operator": "1.0"},
     }
     return json
 
@@ -58,6 +59,7 @@ def fixture_build_details_json2():
         "request_type": "request_type",
         "arches": ["x86_64"],
         "bundle_mapping": {"bundle_mapping": "map"},
+        "omps_operator_version": {"operator": "1.0"},
     }
     return json
 
@@ -148,28 +150,34 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
         assert iibc.add_bundles(
             "index-image", "binary", ["bundles-map"], []
         ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
-        assert iibc.add_bundles(
-            "index-image",
-            "binary",
-            ["bundles-map"],
-            [],
-            cnr_token="cnr",
-            organization="org",
-            overwrite_from_index=True,
-            overwrite_from_index_token="str",
-        ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        assert (
+            iibc.add_bundles(
+                "index-image",
+                "binary",
+                ["bundles-map"],
+                [],
+                cnr_token="cnr",
+                organization="org",
+                overwrite_from_index=True,
+                overwrite_from_index_token="str",
+            )
+            == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        )
         assert (
             iibc.add_bundles("index-image", "binary", ["bundles-map"], [], raw=True)
             == fixture_build_details_json
         )
-        assert iibc.remove_operators(
-            "index-image",
-            "binary",
-            ["operator1"],
-            [],
-            overwrite_from_index=True,
-            overwrite_from_index_token="str",
-        ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        assert (
+            iibc.remove_operators(
+                "index-image",
+                "binary",
+                ["operator1"],
+                [],
+                overwrite_from_index=True,
+                overwrite_from_index_token="str",
+            )
+            == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
+        )
         assert (
             iibc.remove_operators("index-image", "binary", ["operator1"], [], raw=True)
             == fixture_build_details_json
@@ -206,7 +214,11 @@ def test_iib_client_failure(fixture_build_details_json):
         iibc = IIBClient("fake-host")
         with pytest.raises(ValueError, match=error_msg):
             iibc.remove_operators(
-                "index-image", "binary", ["operator1"], [], overwrite_from_index=True,
+                "index-image",
+                "binary",
+                ["operator1"],
+                [],
+                overwrite_from_index=True,
             )
         with pytest.raises(ValueError, match=error_msg):
             iibc.remove_operators(
@@ -404,6 +416,7 @@ def test_iibbuilddetailsmodel(fixture_build_details_json):
         "request_type",
         ["x86_64"],
         {"bundle_mapping": "map"},
+        {"operator": "1.0"},
     )
     expected_model = IIBBuildDetailsModel(
         1,
@@ -421,6 +434,7 @@ def test_iibbuilddetailsmodel(fixture_build_details_json):
         "request_type",
         ["x86_64"],
         {"bundle_mapping": "map"},
+        {"operator": "1.0"},
     )
     model = IIBBuildDetailsModel.from_dict(fixture_build_details_json)
     assert model == expected_model

@@ -44,6 +44,7 @@ class IIBBuildDetailsModel(object):
         request_type,
         arches,
         bundle_mapping,
+        omps_operator_version,
     ):
         """
         Args:
@@ -76,6 +77,8 @@ class IIBBuildDetailsModel(object):
             bundle_mapping (dict)
                 Operator names in "bundles" map to: list of "bundles" which
                 map to the operator key
+            omps_operator_version (dict)
+                Operator version returned from OMPS API call used for Add request
         """
         self.id = _id
         self.state = state
@@ -92,6 +95,7 @@ class IIBBuildDetailsModel(object):
         self.request_type = request_type
         self.arches = arches
         self.bundle_mapping = bundle_mapping
+        self.omps_operator_version = omps_operator_version
 
     @classmethod
     def from_dict(cls, data):
@@ -111,6 +115,7 @@ class IIBBuildDetailsModel(object):
             data["request_type"],
             data["arches"],
             data["bundle_mapping"],
+            data.get("omps_operator_version", {}),
         )
 
     def to_dict(self):
@@ -130,6 +135,7 @@ class IIBBuildDetailsModel(object):
             "request_type": self.request_type,
             "arches": self.arches,
             "bundle_mapping": self.bundle_mapping,
+            "omps_operator_version": self.omps_operator_version,
         }
 
     def __eq__(self, other):
@@ -149,6 +155,7 @@ class IIBBuildDetailsModel(object):
             and self.request_type == other.request_type
             and self.arches == other.arches
             and self.bundle_mapping == other.bundle_mapping
+            and self.omps_operator_version == other.omps_operator_version
         ):
             return True
         return False
