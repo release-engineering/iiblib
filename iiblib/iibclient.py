@@ -511,9 +511,11 @@ class IIBClient(object):
         post_data = {
             "from_index": index_image,
             "binary_image": binary_image,
-            "bundles": bundles,
             "add_arches": arches,
         }
+
+        if bundles:
+            post_data["bundles"] = bundles
 
         if cnr_token:
             post_data["cnr_token"] = cnr_token
