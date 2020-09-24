@@ -65,6 +65,29 @@ def fixture_build_details_json2():
 
 
 @pytest.fixture
+def fixture_build_details_json3():
+    json = {
+        "id": 1,
+        "state": "in_progress",
+        "state_reason": "state_reason",
+        "state_history": [],
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "bundles": ["bundles1"],
+        "removed_operators": ["operator1"],
+        "organization": "organization",
+        "binary_image": "mapped_binary_image",
+        "binary_image_resolved": "mapped_binary_image_resolved",
+        "index_image": "index_image",
+        "request_type": "request_type",
+        "arches": ["x86_64"],
+        "bundle_mapping": {"bundle_mapping": "map"},
+        "omps_operator_version": {"operator": "1.0"},
+    }
+    return json
+
+
+@pytest.fixture
 def fixture_builds_page1_json(fixture_build_details_json):
     json = {
         "items": [fixture_build_details_json],
@@ -148,14 +171,14 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
 
         iibc = IIBClient("fake-host")
         assert iibc.add_bundles(
-            "index-image", "binary", ["bundles-map"], []
+            "index-image", ["bundles-map"], [], binary_image="binary"
         ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
         assert (
             iibc.add_bundles(
                 "index-image",
-                "binary",
                 ["bundles-map"],
                 [],
+                binary_image="binary",
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index=True,
@@ -164,22 +187,26 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
             == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
         )
         assert (
-            iibc.add_bundles("index-image", "binary", ["bundles-map"], [], raw=True)
+            iibc.add_bundles(
+                "index-image", ["bundles-map"], [], binary_image="binary", raw=True
+            )
             == fixture_build_details_json
         )
         assert (
             iibc.remove_operators(
                 "index-image",
-                "binary",
                 ["operator1"],
                 [],
+                binary_image="binary",
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
             )
             == IIBBuildDetailsModel.from_dict(fixture_build_details_json)
         )
         assert (
-            iibc.remove_operators("index-image", "binary", ["operator1"], [], raw=True)
+            iibc.remove_operators(
+                "index-image", ["operator1"], [], binary_image="binary", raw=True
+            )
             == fixture_build_details_json
         )
         assert iibc.get_build(1) == IIBBuildDetailsModel.from_dict(
@@ -215,25 +242,25 @@ def test_iib_client_failure(fixture_build_details_json):
         with pytest.raises(ValueError, match=error_msg):
             iibc.remove_operators(
                 "index-image",
-                "binary",
                 ["operator1"],
                 [],
+                binary_image="binary",
                 overwrite_from_index=True,
             )
         with pytest.raises(ValueError, match=error_msg):
             iibc.remove_operators(
                 "index-image",
-                "binary",
                 ["operator1"],
                 [],
+                binary_image="binary",
                 overwrite_from_index_token="str",
             )
         with pytest.raises(ValueError, match=error_msg):
             iibc.add_bundles(
                 "index-image",
-                "binary",
                 ["bundles-map"],
                 [],
+                binary_image="binary",
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index=True,
@@ -241,13 +268,64 @@ def test_iib_client_failure(fixture_build_details_json):
         with pytest.raises(ValueError, match=error_msg):
             iibc.add_bundles(
                 "index-image",
-                "binary",
                 ["bundles-map"],
                 [],
+                binary_image="binary",
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index_token="str",
             )
+
+
+def test_iib_client_no_binary_image(fixture_build_details_json3):
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "POST",
+            "/api/v1/builds/add",
+            status_code=200,
+            json=fixture_build_details_json3,
+        )
+        m.register_uri(
+            "POST",
+            "/api/v1/builds/rm",
+            status_code=200,
+            json=fixture_build_details_json3,
+        )
+
+        iibc = IIBClient("fake-host")
+        assert iibc.add_bundles(
+            "index-image", ["bundles-map"], []
+        ) == IIBBuildDetailsModel.from_dict(fixture_build_details_json3)
+        assert (
+            iibc.add_bundles(
+                "index-image",
+                ["bundles-map"],
+                [],
+                cnr_token="cnr",
+                organization="org",
+                overwrite_from_index=True,
+                overwrite_from_index_token="str",
+            )
+            == IIBBuildDetailsModel.from_dict(fixture_build_details_json3)
+        )
+        assert (
+            iibc.add_bundles("index-image", ["bundles-map"], [], raw=True)
+            == fixture_build_details_json3
+        )
+        assert (
+            iibc.remove_operators(
+                "index-image",
+                ["operator1"],
+                [],
+                overwrite_from_index=True,
+                overwrite_from_index_token="str",
+            )
+            == IIBBuildDetailsModel.from_dict(fixture_build_details_json3)
+        )
+        assert (
+            iibc.remove_operators("index-image", ["operator1"], [], raw=True)
+            == fixture_build_details_json3
+        )
 
 
 def test_client_wait_for_build(fixture_build_details_json):
