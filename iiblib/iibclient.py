@@ -467,9 +467,9 @@ class IIBClient(object):
     def add_bundles(
         self,
         index_image,
-        binary_image,
         bundles,
         arches,
+        binary_image=None,
         cnr_token=None,
         organization=None,
         overwrite_from_index=False,
@@ -481,12 +481,12 @@ class IIBClient(object):
         Args:
             index_image (str)
                 Index image ref used as source to rebuild
-            binary_image (str)
-                Image with binary used to rebuild existing index image
             bundles (list)
                 List of references to bundle images to be added to index image
             arches (list)
                 List of architectures supported in new index image
+            binary_image (str)
+                optional. Image with binary used to rebuild existing index image
             cnr_token (srt)
                 optional. CNR token.
             organization (str)
@@ -510,9 +510,11 @@ class IIBClient(object):
 
         post_data = {
             "from_index": index_image,
-            "binary_image": binary_image,
             "add_arches": arches,
         }
+
+        if binary_image:
+            post_data["binary_image"] = binary_image
 
         if bundles:
             post_data["bundles"] = bundles
@@ -548,9 +550,9 @@ class IIBClient(object):
     def remove_operators(
         self,
         index_image,
-        binary_image,
         operators,
         arches,
+        binary_image=None,
         overwrite_from_index=False,
         overwrite_from_index_token=None,
         raw=False,
@@ -560,12 +562,12 @@ class IIBClient(object):
         Args:
             index_image (str)
                 Index image ref used as source to rebuild
-            binary_image (str)
-                Image with binary used to rebuild existing index image
             operators (list)
                 List of operators to be removed from existing index image
             arches (list)
                 List of architectures supported in new index image
+            binary_image (str)
+                optional. Image with binary used to rebuild existing index image
             overwrite_from_index (bool)
                 optional. Indicates if resulting index_image needs to be
                 overwritten at the location of from_index. If this is provided,
@@ -584,10 +586,12 @@ class IIBClient(object):
         """
         post_data = {
             "from_index": index_image,
-            "binary_image": binary_image,
             "operators": operators,
             "add_arches": arches,
         }
+
+        if binary_image:
+            post_data["binary_image"] = binary_image
 
         if overwrite_from_index:
             if overwrite_from_index_token:
