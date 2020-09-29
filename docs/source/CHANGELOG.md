@@ -9,6 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - N/A
 
+## [0.12.0] - 2020-09-29
+
+### Added
+
+ - added support for 'omps_operator_version'
+  
+### Changed
+
+ - 'bundles' is now an optional parameter in IIB requests
+ - 'binary_image' is now an optional parameter in IIB requests
+
 ## [0.11.0] - 2020-07-06
 
 ### Added
