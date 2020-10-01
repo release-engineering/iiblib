@@ -87,6 +87,29 @@ def fixture_build_details_json3():
     return json
 
 
+#TODO request type - regenerate bundle
+@pytest.fixture
+def fixture_build_details_json4():
+    json = {
+        "id": 1,
+        "state": "in_progress",
+        "state_reason": "state_reason",
+        "state_history": [],
+        "bundles": ["bundles1"],
+        "removed_operators": ["operator1"],
+        "organization": "organization",
+        "binary_image": "mapped_binary_image",
+        "binary_image_resolved": "mapped_binary_image_resolved",
+        "index_image": "index_image",
+        "request_type": "request_type",
+        "arches": ["x86_64"],
+        "bundle_mapping": {"bundle_mapping": "map"},
+        "omps_operator_version": {"operator": "1.0"},
+    }
+    return json
+
+
+
 @pytest.fixture
 def fixture_builds_page1_json(fixture_build_details_json):
     json = {
@@ -162,12 +185,14 @@ def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
             status_code=200,
             json=fixture_build_details_json,
         )
+        # TODO add regenerate bundles
         m.register_uri(
             "GET", "/api/v1/builds", status_code=200, json=fixture_builds_page1_json
         )
         m.register_uri(
             "GET", "/api/v1/builds/1", status_code=200, json=fixture_build_details_json
         )
+        #TODO mock response
 
         iibc = IIBClient("fake-host")
         assert iibc.add_bundles(
