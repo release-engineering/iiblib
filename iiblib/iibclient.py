@@ -29,9 +29,9 @@ class IIBAuth(object):
 
 class IIBBuildDetailsModel(object):
     """Model class handling data about index build task"""
-    # TODO description of data_attrs
-    _data_attrs = ["arches", "id", "state", "state_reason", "request_type", "state_history", "organization"]
-    _kwarttrs = [] # TODO I might not need it
+
+    _data_attrs = []
+    _kwarttrs = []
 
     def __init__(self, *args, **kwargs):
         self.data = {}

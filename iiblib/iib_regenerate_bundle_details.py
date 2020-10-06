@@ -1,5 +1,7 @@
 class RegenerateBundleModel(object):
 
+    _data_attrs = ["arches", "id", "state", "state_reason", "request_type", "state_history", "organization"]
+
     _kwarttrs = ["bundle_image", "from_bundle_image", "from_bundle_image_resolved"]
 
     @classmethod

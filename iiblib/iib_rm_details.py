@@ -1,4 +1,7 @@
 class RmModel(object):
+
+    _data_attrs = ["arches", "id", "state", "state_reason", "request_type", "state_history", "organization"]
+
     _kwarttrs = ["binary_image", "binary_image_resolved", "bundles", "bundle_mapping", "from_index", "from_index_resolved", "index_image",  "removed_operators"]
 
     @classmethod
