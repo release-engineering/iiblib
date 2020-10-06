@@ -1,10 +1,9 @@
-class RegenerateBundleModel(object): # TODO maybe a new file
+class RegenerateBundleModel(object):
 
-    _data_attrs = ["arches", "id", "state", "state_reason", "request_type", "state_history"]
-    _kwarttrs = ["bundle_image", "from_bundle_image", "from_bundle_image_resolved", "organization"]
+    _kwarttrs = ["bundle_image", "from_bundle_image", "from_bundle_image_resolved"]
 
     @classmethod
-    def from_dict(cls, data): # TODO na zaklade request type ne class
+    def from_dict(cls, data):
         return cls(
             data["arches"],
             data["id"],
