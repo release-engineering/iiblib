@@ -6,9 +6,11 @@ import requests_mock
 from mock import patch, MagicMock, call
 from requests import HTTPError
 
-from iiblib.iibclient import (
+from iiblib.model import (
     IIBBuildDetailsModel,
     IIBBuildDetailsPager,
+)
+from iiblib.iibclient import (
     IIBAuth,
     IIBBasicAuth,
     IIBKrbAuth,

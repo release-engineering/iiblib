@@ -8,9 +8,10 @@ import requests
 from requests.adapters import HTTPAdapter
 from requests.packages.urllib3.util.retry import Retry
 
-from .iib_add_details import AddModel
-from .iib_rm_details import RmModel
-from .iib_regenerate_bundle_details import RegenerateBundleModel
+from .model import AddModel
+from .model import RmModel
+from .model import RegenerateBundleModel
+from .model import IIBBuildDetailsPager
 
 class IIBException(Exception):
     """ General IIB exception"""
@@ -25,127 +26,6 @@ class IIBAuth(object):
 
     def make_auth(self, iib_session):  # pragma: no cover
         raise NotImplementedError
-
-
-class IIBBuildDetailsModel(object):
-    """Model class handling data about index build task"""
-
-    _data_attrs = []
-    _kwarttrs = []
-
-    def __init__(self, *args, **kwargs):
-        self.data = {}
-        for attr, attr_val in zip(args, self._data_attrs):
-            self.data[attr_val] = attr
-        for key, value in kwargs.items():
-            self.data[key] = value
-
-    #     """
-    #     Args:
-    #         organization (str)
-    #             Name of organization to push to in the legacy app registry
-    #         request_type (str)
-    #             Type of iib build task (add or remove)
-    #         arches (list)
-    #             List of architectures supported in new index image
-    #     """
-
-    @classmethod
-    def from_dict(cls, data):
-        if data.request_type == "add":
-            return AddModel.from_dict(data)
-        elif data.request_type == "rm":
-            return RmModel.from_dict(data)
-        elif data.request_type == "regenerate-bundle":
-            return RegenerateBundleModel.from_dict(data)
-
-    def to_dict(self):
-        result = []
-        for key, val in self.data.items():
-            result[key] = val
-        return result
-
-    def __eq__(self, other):
-        return self == other
-
-
-class IIBBuildDetailsPager(object):
-    def __init__(self, iibclient, page):
-        """
-        Args:
-            iibclient (IIBClient)
-                IIBClient instance
-            page (int)
-                page where start listing items
-        """
-        self.page = page
-        self.iibclient = iibclient
-        self._items = []
-        self.meta = {}
-
-    def reload_page(self):
-        """Reload items for current page"""
-
-        ret = self.iibclient.get_builds(self.page, raw=True)
-        self.meta = ret["meta"]
-        self._items = [IIBBuildDetailsModel.from_dict(x) for x in ret["items"]]
-
-    def next(self):
-        """Load items for next page and set it as current"""
-
-        self.page += 1
-        self.reload_page()
-
-    def prev(self):
-        """Load items for previous page and set it as current"""
-
-        if self.page > 1:
-            self.page -= 1
-        self.reload_page()
-
-    def items(self):
-        """Return items for current page"""
-        return self._items
-
-    @classmethod
-    def from_dict(cls, iibclient, _dict):
-        ret = cls(iibclient, _dict["meta"]["page"])
-        ret.meta = _dict["meta"]
-        ret._items = [IIBBuildDetailsModel.from_dict(x) for x in _dict["items"]]
-        return ret
-
-    def __eq__(self, other):
-        return (
-            self._items == other._items
-            and self.iibclient == other.iibclient
-            and self.meta == other.meta
-        )
-
-
-class IIBBasicAuth(IIBAuth):
-    """Basic Auth provider to IIBClient."""
-
-    # pylint: disable=super-init-not-called
-    def __init__(self, user, password):
-        """
-        Args:
-            user (str)
-                Basic auth user name
-            password (str)
-                Basic auth password
-        """
-        self.user = user
-        self.password = password
-
-    def make_auth(self, iib_session):
-        """Setup IIBSession with basic auth.
-
-        Args:
-            iib_session (IIBSession)
-                IIBSession instance
-        """
-
-        iib_session.session.headers["auth"] = (self.user, self.password)
 
 
 class IIBKrbAuth(IIBAuth):
@@ -212,6 +92,32 @@ class IIBKrbAuth(IIBAuth):
     def make_auth(self, iib_session):
         """Setup IIBSession with kerberos authentication"""
         iib_session.session.headers["Authorization"] = self._krb_auth_header()
+
+
+class IIBBasicAuth(IIBAuth):
+    """Basic Auth provider to IIBClient."""
+
+    # pylint: disable=super-init-not-called
+    def __init__(self, user, password):
+        """
+        Args:
+            user (str)
+                Basic auth user name
+            password (str)
+                Basic auth password
+        """
+        self.user = user
+        self.password = password
+
+    def make_auth(self, iib_session):
+        """Setup IIBSession with basic auth.
+
+        Args:
+            iib_session (IIBSession)
+                IIBSession instance
+        """
+
+        iib_session.session.headers["auth"] = (self.user, self.password)
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
