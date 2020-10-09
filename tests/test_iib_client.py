@@ -1,21 +1,15 @@
 import copy
-
 import pytest
 import requests
 import requests_mock
-from mock import patch, MagicMock, call
 from requests import HTTPError
 
-from iiblib.iibclient import (
-    IIBBuildDetailsModel,
-    IIBBuildDetailsPager,
-    IIBAuth,
-    IIBBasicAuth,
-    IIBKrbAuth,
+from iiblib.iib_client import (
     IIBClient,
-    IIBSession,
     IIBException,
 )
+from iiblib.iib_build_details_model import IIBBuildDetailsModel
+from iiblib.iib_build_details_pager import IIBBuildDetailsPager
 
 
 @pytest.fixture
@@ -121,31 +115,6 @@ def fixture_builds_page2_json(fixture_build_details_json2):
         },
     }
     return json
-
-
-@patch("requests.Session.get")
-@patch("requests.Session.post")
-@patch("requests.Session.put")
-@patch("requests.Session.delete")
-def test_iib_session_methods(patched_delete, patched_put, patched_post, patched_get):
-    iibs = IIBSession("fake-host")
-    iibs.get("fake-end-point")
-    iibs.post("fake-end-point")
-    iibs.put("fake-end-point")
-    iibs.delete("fake-end-point")
-
-    patched_get.assert_called_with(
-        "https://fake-host/api/v1/fake-end-point", verify=True
-    )
-    patched_post.assert_called_with(
-        "https://fake-host/api/v1/fake-end-point", verify=True
-    )
-    patched_put.assert_called_with(
-        "https://fake-host/api/v1/fake-end-point", verify=True
-    )
-    patched_delete.assert_called_with(
-        "https://fake-host/api/v1/fake-end-point", verify=True
-    )
 
 
 def test_iib_client(fixture_build_details_json, fixture_builds_page1_json):
@@ -383,80 +352,6 @@ def test_client_wait_for_build_timeout(fixture_build_details_json):
             )
 
 
-def test_client_auth():
-    auth = IIBBasicAuth("foo", "bar")
-    iibc = IIBClient("fake-host", auth=auth)
-    assert iibc.iib_session.session.headers["auth"] == ("foo", "bar")
-
-
-def test_iib_basic_auth():
-    session = MagicMock()
-    session.session.headers = {}
-    auth = IIBBasicAuth("foo", "bar")
-    auth.make_auth(session)
-    assert session.session.headers["auth"] == ("foo", "bar")
-
-
-@patch("subprocess.Popen")
-@patch("kerberos.authGSSClientStep")
-@patch("kerberos.authGSSClientResponse")
-@patch("kerberos.authGSSClientInit")
-def test_iib_krb_auth(
-    mocked_auth_gss_client_init,
-    mocked_auth_gss_client_response,
-    mocked_auth_gss_client_step,
-    mocked_popen,
-):
-    mocked_auth_gss_client_init.return_value = ("", None)
-    mocked_auth_gss_client_response.return_value = ""
-    session = MagicMock()
-    session.session.headers = {}
-    auth = IIBKrbAuth("test_principal", "someservice")
-    auth.make_auth(session)
-    mocked_auth_gss_client_init.assert_called_with("HTTP@someservice")
-    mocked_popen.assert_has_calls([call(["klist"], stderr=-1, stdout=-1)])
-
-    auth = IIBKrbAuth("test_principal", "someservice", ktfile="/some/kt/file")
-    auth.make_auth(session)
-    mocked_auth_gss_client_init.assert_called_with("HTTP@someservice")
-
-
-@patch("os.unlink")
-@patch("tempfile.mkstemp")
-@patch("subprocess.Popen.wait")
-@patch("subprocess.Popen")
-@patch("kerberos.authGSSClientStep")
-@patch("kerberos.authGSSClientResponse")
-@patch("kerberos.authGSSClientInit")
-def test_iib_krb_auth_no_keytab(
-    mocked_auth_gss_client_init,
-    mocked_auth_gss_client_response,
-    mocked_auth_gss_client_step,
-    mocked_popen,
-    mocked_popen_wait,
-    mocked_mkstemp,
-    mocked_os_unlink,
-):
-    mocked_mkstemp.return_value = (None, "/tmp/krb5ccomuHss")
-    mocked_popen_wait.side_effect = [1, 0]
-    mocked_auth_gss_client_init.return_value = ("", None)
-    mocked_auth_gss_client_response.return_value = ""
-    session = MagicMock()
-    session.session.headers = {}
-    auth = IIBKrbAuth("test_principal", "someservice")
-    auth.make_auth(session)
-    mocked_auth_gss_client_init.assert_called_with("HTTP@someservice")
-    mocked_popen.assert_has_calls(
-        [
-            call(
-                ["kinit", "test_principal", "-k", "-c", "/tmp/krb5ccomuHss"],
-                stderr=-1,
-                stdout=-1,
-            )
-        ]
-    )
-
-
 @pytest.mark.xfail
 def test_health():
     iibc = IIBClient("fake-host")
@@ -467,98 +362,6 @@ def test_health():
 def test_rebuild_index():
     iibc = IIBClient("fake-host")
     iibc.rebuild_index("some index")
-
-
-def test_iibauth_abstract():
-    try:
-        IIBAuth()
-        raise AssertionError("Should raise NotImplementedError")
-    except NotImplementedError:
-        pass
-
-
-def test_iibbuilddetailsmodel(fixture_build_details_json):
-    unexpected_model = IIBBuildDetailsModel(
-        1,
-        "finished",
-        "state_reason",
-        [],
-        "from_index",
-        "from_index_resolved",
-        ["bundles1"],
-        ["operator1"],
-        "organization",
-        "binary_image",
-        "binary_image_resolved",
-        "index_image",
-        "request_type",
-        ["x86_64"],
-        {"bundle_mapping": "map"},
-        {"operator": "1.0"},
-    )
-    expected_model = IIBBuildDetailsModel(
-        1,
-        "in_progress",
-        "state_reason",
-        [],
-        "from_index",
-        "from_index_resolved",
-        ["bundles1"],
-        ["operator1"],
-        "organization",
-        "binary_image",
-        "binary_image_resolved",
-        "index_image",
-        "request_type",
-        ["x86_64"],
-        {"bundle_mapping": "map"},
-        {"operator": "1.0"},
-    )
-    model = IIBBuildDetailsModel.from_dict(fixture_build_details_json)
-    assert model == expected_model
-    assert model != unexpected_model
-
-    model = IIBBuildDetailsModel.from_dict(fixture_build_details_json).to_dict()
-    assert model == expected_model.to_dict()
-    assert model != unexpected_model.to_dict()
-
-
-def test_iibbuilddetails_pager(
-    fixture_builds_page1_json,
-    fixture_builds_page2_json,
-    fixture_build_details_json,
-    fixture_build_details_json2,
-):
-    with requests_mock.Mocker() as m:
-        m.register_uri(
-            "GET", "/api/v1/builds", status_code=200, json=fixture_builds_page1_json
-        )
-        m.register_uri(
-            "GET",
-            "/api/v1/builds?page=2",
-            status_code=200,
-            json=fixture_builds_page2_json,
-        )
-        m.register_uri(
-            "GET",
-            "/api/v1/builds?page=1",
-            status_code=200,
-            json=fixture_builds_page1_json,
-        )
-
-        iibc = IIBClient("fake-host")
-        pager = iibc.get_builds()
-        assert pager.items() == [
-            IIBBuildDetailsModel.from_dict(fixture_builds_page1_json["items"][0])
-        ]
-        pager.next()
-        assert pager.items() == [
-            IIBBuildDetailsModel.from_dict(fixture_builds_page2_json["items"][0])
-        ]
-        pager.prev()
-        assert pager.items() == [
-            IIBBuildDetailsModel.from_dict(fixture_builds_page1_json["items"][0])
-        ]
 
 
 def test_http_error_response():

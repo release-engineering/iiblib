@@ -3,6 +3,7 @@ import kerberos
 import subprocess
 import tempfile
 
+
 # pylint: disable=bad-option-value,useless-object-inheritance
 class IIBAuth(object):
     def __init__(self):
@@ -62,7 +63,8 @@ class IIBKrbAuth(IIBAuth):
         ).wait()
         krb5ccname = None
         if retcode or self.ktfile:
-            old_krb5ccname = os.environ.get("KRB5CCNAME", "") # can I define it on the higher level out of if?
+            # can I define old_krb5ccname on the higher level out of if?
+            old_krb5ccname = os.environ.get("KRB5CCNAME", "")
             _, krb5ccname = tempfile.mkstemp(prefix="krb5cc")
             if self.ktfile:
                 retcode = subprocess.Popen(

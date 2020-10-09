@@ -48,7 +48,7 @@ class IIBBuildDetailsPager(object):
 
     def __eq__(self, other):
         return (
-            self._items == other._items # can I rathe use function self.items?
+            self._items == other._items  # can I rather use function self.items?
             and self.iibclient == other.iibclient
             and self.meta == other.meta
         )

@@ -8,6 +8,7 @@ from .iib_session import IIBSession
 
 class IIBException(Exception):
     """ General IIB exception"""
+
     pass
 
 
