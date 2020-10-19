@@ -36,7 +36,7 @@ def read_content(filepath):
 
 
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 5 - Production/Stable",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Programming Language :: Python",
@@ -62,7 +62,7 @@ if os.environ.get("READTHEDOCS", None):
 
 setup(
     name="iiblib",
-    version="0.13.0",
+    version="1.0.0",
     description="IIB client library",
     long_description=long_description,
     author="Jindrich Luza",
