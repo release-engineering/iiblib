@@ -49,7 +49,7 @@ classifiers = [
 ]
 
 
-long_description = read_content("README.rst") + read_content(
+long_description = read_content("README.md") + read_content(
     os.path.join("docs/source", "CHANGELOG.md")
 )
 
@@ -65,6 +65,7 @@ setup(
     version="1.0.0",
     description="IIB client library",
     long_description=long_description,
+    long_description_content_type="text/markdown",
     author="Jindrich Luza",
     author_email="jluza@redhat.com",
     url="https://gitlab.cee.redhat.com/jluza/iiblib",
