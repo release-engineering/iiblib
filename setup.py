@@ -67,7 +67,7 @@ setup(
     long_description=long_description,
     author="Jindrich Luza",
     author_email="jluza@redhat.com",
-    url="https://gitlab.cee.redhat.com/jluza/iiblib",
+    url="https://github.com/release-engineering/iiblib",
     classifiers=classifiers,
     packages=["iiblib"],
     data_files=[],
