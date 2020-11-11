@@ -8,7 +8,7 @@ from iiblib.iib_client import (
     IIBClient,
     IIBException,
 )
-from iiblib.iib_build_details_model import IIBBuildDetailsModel
+from iiblib.iib_build_details_model import IIBBuildDetailsModel, AddModel, RmModel
 from iiblib.iib_build_details_pager import IIBBuildDetailsPager
 
 
@@ -146,7 +146,6 @@ def test_iib_client(
             status_code=200,
             json=fixture_rm_build_details_json,
         )
-        # TODO add other request types
 
         m.register_uri(
             "POST",
@@ -179,7 +178,7 @@ def test_iib_client(
         iibc = IIBClient("fake-host")
         assert iibc.add_bundles(
             "index-image", ["bundles-map"], [], binary_image="binary"
-        ) == IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
+        ) == AddModel.from_dict(fixture_add_build_details_json)
         assert (
             iibc.add_bundles(
                 "index-image",
@@ -191,7 +190,7 @@ def test_iib_client(
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
             )
-            == IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
+            == AddModel.from_dict(fixture_add_build_details_json)
         )
         assert (
             iibc.add_bundles(
@@ -208,7 +207,7 @@ def test_iib_client(
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
             )
-            == IIBBuildDetailsModel.from_dict(fixture_rm_build_details_json)
+            == RmModel.from_dict(fixture_rm_build_details_json)
         )
         assert (
             iibc.remove_operators(

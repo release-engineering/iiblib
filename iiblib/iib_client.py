@@ -1,7 +1,7 @@
 import time
 
 from .iib_build_details_pager import IIBBuildDetailsPager
-from .iib_build_details_model import IIBBuildDetailsModel
+from .iib_build_details_model import IIBBuildDetailsModel, RmModel, AddModel
 from .iib_authentication import IIBAuth
 from .iib_session import IIBSession
 
@@ -157,7 +157,7 @@ class IIBClient(object):
 
         if raw:
             return resp.json()
-        return IIBBuildDetailsModel.from_dict(resp.json())
+        return AddModel.from_dict(resp.json())
 
     def remove_operators(
         self,
@@ -225,7 +225,7 @@ class IIBClient(object):
 
         if raw:
             return resp.json()
-        return IIBBuildDetailsModel.from_dict(resp.json())
+        return RmModel.from_dict(resp.json())
 
     def get_builds(self, page=1, raw=False):
         """Get all historical builds of index image.

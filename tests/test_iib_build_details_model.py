@@ -88,7 +88,7 @@ def fixture_regenerate_bundle_build_details_json():
 
 
 @pytest.fixture
-def fixture_unknown_build_details_json():
+def fixture_unknown_request_type_json():
     json = {
         "id": 3,
         "arches": ["x86_64"],
@@ -155,113 +155,33 @@ def test_from_dict_success(
     fixture_regenerate_bundle_build_details_json,
     fixture_optional_args_missing_json,
 ):
-    add_model = AddModel(
-        id=1,
-        arches=["x86_64"],
-        state="in_progress",
-        state_reason="state_reason",
-        request_type="add",
-        state_history=[],
-        batch=1,
-        batch_annotations={"batch_annotations": 1},
-        logs={},
-        updated="updated",
-        user="user@example.com",
-        binary_image="binary_image",
-        binary_image_resolved="binary_image_resolved",
-        bundles=["bundles1"],
-        bundle_mapping={"bundle_mapping": "map"},
-        from_index="from_index",
-        from_index_resolved="from_index_resolved",
-        index_image="index_image",
-        removed_operators=["operator1"],
-        organization="organization",
-        omps_operator_version={"operator": "1.0"},
-        distribution_scope="null",
-    )
-    rm_model = RmModel(
-        id=2,
-        arches=["x86_64"],
-        state="in_progress",
-        state_reason="state_reason",
-        request_type="rm",
-        state_history=[],
-        batch=1,
-        batch_annotations={"batch_annotations": 1},
-        logs={},
-        updated="updated",
-        user="user@example.com",
-        binary_image="binary_image",
-        binary_image_resolved="binary_image_resolved",
-        bundles=["bundles1"],
-        bundle_mapping={"bundle_mapping": "map"},
-        from_index="from_index",
-        from_index_resolved="from_index_resolved",
-        index_image="index_image",
-        removed_operators=["operator1"],
-        organization="organization",
-        distribution_scope="null",
-    )
-
-    regenerate_bundle_model = RegenerateBundleModel(
-        id=3,
-        arches=["x86_64"],
-        state="in_progress",
-        state_reason="state_reason",
-        request_type="regenerate-bundle",
-        state_history=[],
-        batch=1,
-        batch_annotations={"batch_annotations": 1},
-        logs={},
-        updated="updated",
-        user="user@example.com",
-        bundle_image="bundle_image",
-        from_bundle_image="from_bundle_image",
-        from_bundle_image_resolved="from_bundle_image_resolved",
-        organization="organization",
-    )
-
-    optional_args_empty = RegenerateBundleModel(
-        id=3,
-        arches=["x86_64"],
-        state="in_progress",
-        state_reason="state_reason",
-        request_type="regenerate-bundle",
-        batch=1,
-        updated="updated",
-        user="user@example.com",
-        state_history=[],
-        batch_annotations={},
-        logs={},
-        bundle_image="bundle_image",
-        from_bundle_image="from_bundle_image",
-        from_bundle_image_resolved="from_bundle_image_resolved",
-        organization="organization",
-    )
 
     model1 = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
-    assert model1 == add_model
+    assert model1 == AddModel(**fixture_add_build_details_json)
 
     model2 = IIBBuildDetailsModel.from_dict(fixture_rm_build_details_json)
-    assert model2 == rm_model
+    assert model2 == RmModel(**fixture_rm_build_details_json)
 
     model3 = IIBBuildDetailsModel.from_dict(
         fixture_regenerate_bundle_build_details_json
     )
-    assert model3 == regenerate_bundle_model
+    assert model3 == RegenerateBundleModel(
+        **fixture_regenerate_bundle_build_details_json
+    )
 
     model4 = IIBBuildDetailsModel.from_dict(fixture_optional_args_missing_json)
-    assert model4 == optional_args_empty
+    assert model4 == RegenerateBundleModel(**fixture_optional_args_missing_json)
 
 
 def test_from_dict_failure(
     fixture_add_build_details_json,
     fixture_rm_build_details_json,
     fixture_bundle_image_missing_json,
-    fixture_unknown_build_details_json,
+    fixture_unknown_request_type_json,
 ):
 
-    error_msg = "Unsupported request type: unknown"
+    key_error_msg = "Unsupported request type: unknown"
+    type_error_msg = "Class AddModel doesn't accept rm request type"
 
     add_model_state_finished = AddModel(
         id=1,
@@ -288,6 +208,31 @@ def test_from_dict_failure(
         distribution_scope="null",
     )
 
+    add_model_wrong_request_type = {
+        "id": 1,
+        "arches": ["x86_64"],
+        "state": "in_progress",
+        "state_reason": "state_reason",
+        "request_type": "rm",
+        "state_history": [],
+        "batch": 1,
+        "batch_annotations": {"batch_annotations": 1},
+        "logs": {},
+        "updated": "updated",
+        "user": "user@example.com",
+        "binary_image": "binary_image",
+        "binary_image_resolved": "binary_image_resolved",
+        "bundles": ["bundles1"],
+        "bundle_mapping": {"bundle_mapping": "map"},
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "index_image": "index_image",
+        "removed_operators": ["operator1"],
+        "organization": "organization",
+        "omps_operator_version": {"operator": "1.0"},
+        "distribution_scope": "null",
+    }
+
     model1 = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
     assert model1 != add_model_state_finished
 
@@ -297,11 +242,14 @@ def test_from_dict_failure(
     with pytest.raises(KeyError):
         IIBBuildDetailsModel.from_dict(fixture_bundle_image_missing_json)
 
-    with pytest.raises(KeyError, match=error_msg):
-        IIBBuildDetailsModel.from_dict(fixture_unknown_build_details_json)
+    with pytest.raises(KeyError, match=key_error_msg):
+        IIBBuildDetailsModel.from_dict(fixture_unknown_request_type_json)
+
+    with pytest.raises(TypeError, match=type_error_msg):
+        AddModel.from_dict(add_model_wrong_request_type)
 
 
-def test_to_dict_success(fixture_rm_build_details_json):
+def test_to_dict(fixture_rm_build_details_json):
 
     rm_model = RmModel(
         id=2,
@@ -327,12 +275,12 @@ def test_to_dict_success(fixture_rm_build_details_json):
         distribution_scope="null",
     )
 
-    model = IIBBuildDetailsModel.from_dict(fixture_rm_build_details_json).to_dict()
+    model = RmModel.from_dict(fixture_rm_build_details_json).to_dict()
     assert model == rm_model.to_dict()
 
 
 def test_general_attributes(fixture_add_build_details_json):
-    model = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
+    model = AddModel.from_dict(fixture_add_build_details_json)
 
     assert model.id == model._data["id"]
     assert model.arches == model._data["arches"]
@@ -345,7 +293,7 @@ def test_general_attributes(fixture_add_build_details_json):
 
 
 def test_optional_attributes(fixture_add_build_details_json):
-    model = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
+    model = AddModel.from_dict(fixture_add_build_details_json)
 
     assert model.state_history == model._data["state_history"]
     assert model.batch_annotations == model._data["batch_annotations"]
@@ -353,7 +301,7 @@ def test_optional_attributes(fixture_add_build_details_json):
 
 
 def test_add_model_attributes(fixture_add_build_details_json):
-    model = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
+    model = AddModel.from_dict(fixture_add_build_details_json)
 
     assert model.binary_image == model._data["binary_image"]
     assert model.binary_image_resolved == model._data["binary_image_resolved"]
@@ -369,7 +317,7 @@ def test_add_model_attributes(fixture_add_build_details_json):
 
 
 def test_rm_model_attributes(fixture_rm_build_details_json):
-    model = IIBBuildDetailsModel.from_dict(fixture_rm_build_details_json)
+    model = RmModel.from_dict(fixture_rm_build_details_json)
 
     assert model.binary_image == model._data["binary_image"]
     assert model.binary_image_resolved == model._data["binary_image_resolved"]
@@ -386,7 +334,9 @@ def test_rm_model_attributes(fixture_rm_build_details_json):
 def test_regenerate_bundle_model_attributes(
     fixture_regenerate_bundle_build_details_json,
 ):
-    model = IIBBuildDetailsModel.from_dict(fixture_regenerate_bundle_build_details_json)
+    model = RegenerateBundleModel.from_dict(
+        fixture_regenerate_bundle_build_details_json
+    )
 
     assert model.bundle_image == model._data["bundle_image"]
     assert model.from_bundle_image == model._data["from_bundle_image"]

@@ -4,27 +4,27 @@ class IIBBuildDetailsModel(object):
 
     Args:
         id (int)
-            Id of build
+            An id of build
         arches (list)
-            List of architectures supported in new index image
+            A list of architectures supported in new index image
         state (str)
-            State of build
+            A state of build
         state_reason (str)
-            Reason for state change
+            A reason for state change
         request_type (str)
-            Type of iib build task
+            A type of iib build task
         batch (int)
-            Number of batches included in the request
+            A number of batches included in the request
         updated (str)
             Time when was the request updated
         user (str)
-            User kerberos (email)
+            A user kerberos (email)
         state_history (list) - optional
-            List of directories where is state, state_reason and updated
+            A list of directories where is state, state_reason and updated
         batch_annotations (dict) - optional
-            Annotation of the batch
+            An annotation of the batch
         logs (dict) - optional
-            Dictionary contains url of the log and expiration date
+            A dictionary contains url of the log and expiration date
     """
 
     __slots__ = [
@@ -61,20 +61,74 @@ class IIBBuildDetailsModel(object):
 
     _operation_attrs = []
 
+    _accepted_request_type = ""
+
     def __init__(self, *args, **kwargs):
         self._data = self._get_args(kwargs)
 
     @classmethod
+    def _validate_data(cls, request_types_and_models, data):
+        """
+        Validate data with class accepted request type
+
+        Args:
+            request_types_and_models (dict)
+                A key is request type and a value is a specific model
+            data (dict)
+                JSON dictionary with response data
+
+        Raises:
+            KeyError
+                The request type is not defined in model
+            TypeError
+                The request type doesn't match with model
+        Returns:
+            None
+        """
+
+        if data["request_type"] not in request_types_and_models:
+            raise KeyError("Unsupported request type: %s" % data["request_type"])
+
+        if (
+            cls._accepted_request_type != data["request_type"]
+            and cls.__name__ != IIBBuildDetailsModel.__name__
+        ):
+            raise TypeError(
+                "Class %s doesn't accept %s request type"
+                % (cls.__name__, data["request_type"]),
+            )
+
+    @classmethod
     def from_dict(cls, data):
-        if data["request_type"] == "add":
-            return AddModel(**data)
-        elif data["request_type"] == "rm":
-            return RmModel(**data)
-        elif data["request_type"] == "regenerate-bundle":
-            return RegenerateBundleModel(**data)
-        raise KeyError("Unsupported request type: %s" % data["request_type"])
+        """
+        Create an object from a dictionary
+
+        Args:
+            data (dict)
+                JSON dictionary with response data
+        Returns:
+            Generate a specific model (AddModel, RmModel or
+            RegenerateBundleModel) and return the object
+        """
+
+        request_types_and_classes = {
+            sub_cls._accepted_request_type: sub_cls
+            for sub_cls in IIBBuildDetailsModel.__subclasses__()
+        }
+        cls._validate_data(request_types_and_classes, data)
+
+        return request_types_and_classes[data["request_type"]](**data)
 
     def _get_args(self, data):
+        """
+        Store data in an instance  "_data" dictionary
+
+        Args:
+            data (dict)
+                A dictionary with response data
+        Returns:
+            A dictionary which is stored in an instance _data dictionary
+        """
         attrs = {}
         for general_attr in self._general_attrs:
             attrs[general_attr] = data[general_attr]
@@ -88,12 +142,36 @@ class IIBBuildDetailsModel(object):
         return attrs
 
     def to_dict(self):
+        """
+        Return a dictionary from the object
+
+        Returns:
+            A dictionary from the object
+        """
         return self._data
 
     def __eq__(self, other):
+        """
+        Compare an instance with it's class and data stored in _data dictionary
+        Args:
+            other (object)
+                An instance of specific model
+        Returns:
+            A boolean value
+        """
         return isinstance(other, self.__class__) and self._data == other._data
 
     def __getattribute__(self, name):
+        """
+        Return value of the variable which is stored
+        in an instance _data dictionary or as an instance variable
+        Args:
+            name (str)
+                A name of variable
+        Returns:
+            An expected variable
+        """
+
         if (
             name in object.__getattribute__(self, "_operation_attrs")
             or name in object.__getattribute__(self, "_optional_attrs")
@@ -106,36 +184,36 @@ class IIBBuildDetailsModel(object):
 
 class AddModel(IIBBuildDetailsModel):
     """
-    AddModel class handling data from builds/add endpoint, and
-    data from builds and builds/<id> IIB endpoints defined by
+    AddModel class handling data from "builds/add" endpoint, and
+    data from "builds" and "builds/<id>" IIB endpoints defined by
     "add" request_type.
     AddModel class inherits arguments and behaviours
     from IIBBuildDetailsModel.
-    For complete list of arguments check IIBBuildDetailsModel.
+    For a complete list of arguments check IIBBuildDetailsModel.
 
     Args:
         binary_image (str)
-            Reference of binary image used for rebuilding
+            A reference of binary image used for rebuilding
         binary_image_resolved (str)
-            Checksum reference of binary image that was used for rebuilding
+            A checksum reference of binary image that was used for rebuilding
         bundles (list)
-            List of bundles to be added to index image
+            A list of bundles to be added to index image
         bundle_mapping (dict)
             Operator names in "bundles" map to: list of "bundles" which map to the operator key
         from_index (str)
-            Reference of index image used as source for rebuild
+            A reference of index image used as source for rebuild
         from_index_resolved (str)
-            Reference of new index image
+            A reference of new index image
         index_image (str)
-            Reference of index image to rebuild
+            A reference of index image to rebuild
         removed_operators (list)
-            List of operators to be removed from index image
+            A list of operators to be removed from index image
         organization (str)
-            Name of organization to push to in the legacy app registry
+            A name of organization to push to in the legacy app registry
         omps_operator_version (dict)
-            Operator version returned from OMPS API call used for Add request
+            An operator version returned from OMPS API call used for Add request
         distribution_scope (str)
-            Distribution where is the product used (prod, stage, etc.)
+            A distribution where is the product used (prod, stage, etc.)
     """
 
     __slots__ = [
@@ -165,37 +243,39 @@ class AddModel(IIBBuildDetailsModel):
         "omps_operator_version",
         "distribution_scope",
     ]
+
+    _accepted_request_type = "add"
 
 
 class RmModel(IIBBuildDetailsModel):
     """
-    RmModel class handling data from builds/rm endpoint, and
-    data from builds and builds/<id> IIB endpoints defined by
+    RmModel class handling data from "builds/rm" endpoint, and
+    data from "builds" and "builds/<id>" IIB endpoints defined by
     "rm" request_type .
     RmModel class inherits arguments from IIBBuildDetailsModel.
-    For complete list of arguments check IIBBuildDetailsModel.
+    For a complete list of arguments check IIBBuildDetailsModel.
 
     Args:
         binary_image (str)
-            Reference of binary image used for rebuilding
+            A reference of binary image used for rebuilding
         binary_image_resolved (str)
-            Checksum reference of binary image that was used for rebuilding
+            A checksum reference of binary image that was used for rebuilding
         bundles (list)
-            List of bundles to be added to index image
+            A list of bundles to be added to index image
         bundle_mapping (dict)
             Operator names in "bundles" map to: list of "bundles" which map to the operator key
         from_index (str)
-            Reference of index image used as source for rebuild
+            A reference of index image used as source for rebuild
         from_index_resolved (str)
-            Reference of new index image
+            A reference of new index image
         index_image (str)
-            Reference of index image to rebuild
+            A reference of index image to rebuild
         removed_operators (list)
-            List of operators to be removed from index image
+            A list of operators to be removed from index image
         organization (str)
-            Name of organization to push to in the legacy app registry
+            A name of organization to push to in the legacy app registry
         distribution_scope (str)
-            Distribution where is the product used (prod, stage, etc.)
+            A distribution where is the product used (prod, stage, etc.)
     """
 
     __slots__ = [
@@ -222,27 +302,29 @@ class RmModel(IIBBuildDetailsModel):
         "organization",
         "distribution_scope",
     ]
+
+    _accepted_request_type = "rm"
 
 
 class RegenerateBundleModel(IIBBuildDetailsModel):
     """
     RegenerateBundleModel class handling data from
-    builds/regenerate-bundle endpoint, and data from builds
-    and builds/<id> IIB endpoints defined by
+    "builds/regenerate-bundle" endpoint, and data from "builds"
+    and "builds/<id>" IIB endpoints defined by
     "regenerate-bundle" request_type.
     RegenerateBundleModel class inherits arguments from
     IIBBuildDetailsModel.
-    For complete list of arguments check IIBBuildDetailsModel.
+    For a complete list of arguments check IIBBuildDetailsModel.
 
     Args:
         bundle_image (str)
-            Reference of bundle image to rebuild
+            A reference of bundle image to rebuild
         from_bundle_image (str)
-            Reference of bundle image used as source for rebuild
+            A reference of bundle image used as source for rebuild
         from_bundle_image_resolved (str)
-            Reference of new bundle image
+            A reference of new bundle image
         organization (str)
-            Name of organization to push to in the legacy app registry
+            A name of organization to push to in the legacy app registry
     """
 
     __slots__ = [
@@ -257,3 +339,5 @@ class RegenerateBundleModel(IIBBuildDetailsModel):
         "from_bundle_image_resolved",
         "organization",
     ]
+
+    _accepted_request_type = "regenerate-bundle"
