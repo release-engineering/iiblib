@@ -7,55 +7,67 @@ from iiblib.iib_client import IIBClient
 
 
 @pytest.fixture
-def fixture_build_details_json():
+def fixture_add_build_details_json():
     json = {
         "id": 1,
+        "arches": ["x86_64"],
         "state": "in_progress",
         "state_reason": "state_reason",
+        "request_type": "add",
         "state_history": [],
-        "from_index": "from_index",
-        "from_index_resolved": "from_index_resolved",
-        "bundles": ["bundles1"],
-        "removed_operators": ["operator1"],
-        "organization": "organization",
+        "batch": 1,
+        "batch_annotations": {"batch_annotations": 1},
+        "logs": {},
+        "updated": "updated",
+        "user": "user@example.com",
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
-        "index_image": "index_image",
-        "request_type": "request_type",
-        "arches": ["x86_64"],
+        "bundles": ["bundles1"],
         "bundle_mapping": {"bundle_mapping": "map"},
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "index_image": "index_image",
+        "removed_operators": ["operator1"],
+        "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
+        "distribution_scope": "null",
     }
     return json
 
 
 @pytest.fixture
-def fixture_build_details_json2():
+def fixture_add_build_details_json2():
     json = {
         "id": 2,
+        "arches": ["x86_64"],
         "state": "in_progress",
         "state_reason": "state_reason",
+        "request_type": "add",
         "state_history": [],
-        "from_index": "from_index",
-        "from_index_resolved": "from_index_resolved",
-        "bundles": ["bundles1"],
-        "removed_operators": ["operator1"],
-        "organization": "organization",
+        "batch": 2,
+        "batch_annotations": {"batch_annotations": 2},
+        "logs": {},
+        "updated": "updated",
+        "user": "user@example.com",
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
-        "index_image": "index_image",
-        "request_type": "request_type",
-        "arches": ["x86_64"],
+        "bundles": ["bundles1"],
         "bundle_mapping": {"bundle_mapping": "map"},
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "index_image": "index_image",
+        "removed_operators": ["operator1"],
+        "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
+        "distribution_scope": "null",
     }
     return json
 
 
 @pytest.fixture
-def fixture_builds_page1_json(fixture_build_details_json):
+def fixture_builds_page1_json(fixture_add_build_details_json):
     json = {
-        "items": [fixture_build_details_json],
+        "items": [fixture_add_build_details_json],
         "meta": {
             "first": "",
             "last": "",
@@ -71,9 +83,9 @@ def fixture_builds_page1_json(fixture_build_details_json):
 
 
 @pytest.fixture
-def fixture_builds_page2_json(fixture_build_details_json2):
+def fixture_builds_page2_json(fixture_add_build_details_json2):
     json = {
-        "items": [fixture_build_details_json2],
+        "items": [fixture_add_build_details_json2],
         "meta": {
             "first": "",
             "last": "",
@@ -88,11 +100,11 @@ def fixture_builds_page2_json(fixture_build_details_json2):
     return json
 
 
-def test_iibbuilddetails_pager(
+def test_iib_build_details_pager(
     fixture_builds_page1_json,
     fixture_builds_page2_json,
-    fixture_build_details_json,
-    fixture_build_details_json2,
+    fixture_add_build_details_json,
+    fixture_add_build_details_json2,
 ):
     with requests_mock.Mocker() as m:
         m.register_uri(

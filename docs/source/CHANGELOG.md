@@ -7,7 +7,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- N/A
+### Add
+ - new models AddModel, RmModel and RegenerateBundleModel to iib_build_details_model
+ - new functions _get_args, _validate_data and \_\_getattribute\_\_ in IIBBuildDetailsModel
+ - use \__slots\__ for backward compatibility
+ - new class variables _operation_attrs, _optional_attrs, _general_attrs and
+ _accepted_request_type
+
+### Changed
+ - class IIBBuildDetailsModel change to generic class which is inherited by new models
+ - functions from\_dict, to\_dict and \__eq\__ in IIBBuildDetailsModel
+
 
 ## 1.0.0 - 2020-10-20
 
