@@ -7,7 +7,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
- - N/A
+### Fixed
+
+ - fixed a Python 2.6 compatibility issue in iib_build_details_model
 
 ## 2.0.0 - 2020-11-19
 

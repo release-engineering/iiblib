@@ -111,10 +111,10 @@ class IIBBuildDetailsModel(object):
             RegenerateBundleModel) and return the object
         """
 
-        request_types_and_classes = {
-            sub_cls._accepted_request_type: sub_cls
-            for sub_cls in IIBBuildDetailsModel.__subclasses__()
-        }
+        request_types_and_classes = {}
+        for sub_cls in IIBBuildDetailsModel.__subclasses__():
+            request_types_and_classes[sub_cls._accepted_request_type] = sub_cls
+
         cls._validate_data(request_types_and_classes, data)
 
         return request_types_and_classes[data["request_type"]](**data)
