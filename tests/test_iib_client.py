@@ -354,7 +354,7 @@ def test_client_wait_for_build_timeout(fixture_add_build_details_json):
     with requests_mock.Mocker() as m:
         m.register_uri(
             "GET",
-            "/api/v1/builds/{}".format(fixture_add_build_details_json["id"]),
+            "/api/v1/builds/{0}".format(fixture_add_build_details_json["id"]),
             status_code=200,
             json=fixture_add_build_details_json,
         )
