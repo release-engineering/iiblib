@@ -341,3 +341,63 @@ class RegenerateBundleModel(IIBBuildDetailsModel):
     ]
 
     _accepted_request_type = "regenerate-bundle"
+
+
+class MergeIndexImageModel(IIBBuildDetailsModel):
+    """
+    MergeIndexImageModel class handling data from
+    "builds/merge-index-image" endpoint, and data from "builds"
+    and "builds/<id>" IIB endpoints defined by
+    "merge-index-image" request_type.
+    MergeIndexImageModel class inherits arguments from
+    IIBBuildDetailsModel.
+    For a complete list of arguments check IIBBuildDetailsModel.
+
+    Args:
+        binary_image (str)
+            A reference of binary image used for rebuilding
+        binary_image_resolved (str)
+            A checksum reference of binary image that was used for rebuilding
+        deprecation_list (list)
+            A list of bundles to be deprecated from the new index image
+        distribution_scope (str)
+            The scope of distribution for the index created by the request.
+            This will determine what level of protection the addition will have.
+        index_image (str)
+            A reference of index image to rebuild
+        source_from_index (str)
+            An index image that will be used as a base for the new index image.
+        source_from_index_resolved (str)
+            A checksum reference of index image that will be used as a base for the new index image
+        target_index (str)
+            Pull specification of the index image whose bundles from
+            which are going to be added to the content of source_from_index.
+            The resulting index image will use the ocp_version label of this index image.
+        target_index_resolved (str)
+            A digest of target index image
+    """
+
+    __slots__ = [
+        "binary_image",
+        "binary_image_resolved",
+        "deprecation_list",
+        "distribution_scope",
+        "index_image",
+        "source_from_index",
+        "source_from_index_resolved",
+        "target_index",
+        "target_index_resolved",
+    ]
+    _operation_attrs = [
+        "binary_image",
+        "binary_image_resolved",
+        "deprecation_list",
+        "distribution_scope",
+        "index_image",
+        "source_from_index",
+        "source_from_index_resolved",
+        "target_index",
+        "target_index_resolved",
+    ]
+
+    _accepted_request_type = "merge-index-image"
