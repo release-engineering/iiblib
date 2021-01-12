@@ -1,7 +1,12 @@
 import time
 
 from .iib_build_details_pager import IIBBuildDetailsPager
-from .iib_build_details_model import IIBBuildDetailsModel, RmModel, AddModel
+from .iib_build_details_model import (
+    IIBBuildDetailsModel,
+    RmModel,
+    AddModel,
+    RegenerateBundleModel,
+)
 from .iib_authentication import IIBAuth
 from .iib_session import IIBSession
 
@@ -291,6 +296,43 @@ class IIBClient(object):
                     % (build.id, self.wait_for_build_timeout),
                 )
             time.sleep(self.poll_interval)
+
+    def regenerate_bundle(
+        self,
+        bundle_image,
+        organization=None,
+        raw=False,
+    ):
+        """Regenerate bundle image.
+
+        Args:
+            bundle_image (str)
+                The pull specification of the original bundle image
+                that will be modified.
+            organization (str)
+                The name of the organization the bundle should be
+                regenerated for.
+            raw (bool)
+                Return raw json response instead of model instance
+
+        Returns:
+            `RegenerateBundleModel` or dict
+              if raw == True return dict with json response otherwise
+              return `RegenerateBundleModel` instance.
+        """
+
+        post_data = {
+            "from_bundle_image": bundle_image,
+        }
+        if organization:
+            post_data["organization"] = organization
+
+        resp = self.iib_session.post("builds/regenerate-bundle", json=post_data)
+        self._check_response(resp)
+
+        if raw:
+            return resp.json()
+        return RegenerateBundleModel.from_dict(resp.json())
 
     def rebuild_index(self, index_image):
         raise NotImplementedError
