@@ -8,7 +8,12 @@ from iiblib.iib_client import (
     IIBClient,
     IIBException,
 )
-from iiblib.iib_build_details_model import IIBBuildDetailsModel, AddModel, RmModel
+from iiblib.iib_build_details_model import (
+    IIBBuildDetailsModel,
+    AddModel,
+    RmModel,
+    RegenerateBundleModel,
+)
 from iiblib.iib_build_details_pager import IIBBuildDetailsPager
 
 
@@ -214,6 +219,19 @@ def test_iib_client(
                 "index-image", ["operator1"], [], binary_image="binary", raw=True
             )
             == fixture_rm_build_details_json
+        )
+
+        assert iibc.regenerate_bundle(
+            bundle_image="bundle_image",
+            organization="organization",
+        ) == RegenerateBundleModel.from_dict(
+            fixture_regenerate_bundle_build_details_json
+        )
+        assert (
+            iibc.regenerate_bundle(
+                bundle_image="bundle_image", organization="organization", raw=True
+            )
+            == fixture_regenerate_bundle_build_details_json
         )
 
         # get_builds - request_type is "add"
