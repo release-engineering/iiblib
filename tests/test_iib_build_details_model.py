@@ -35,6 +35,7 @@ def fixture_add_build_details_json():
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
         "distribution_scope": "null",
+        "deprecation_list": [],
     }
     return json
 
@@ -64,6 +65,7 @@ def fixture_rm_build_details_json():
         "removed_operators": ["operator1"],
         "organization": "organization",
         "distribution_scope": "null",
+        "deprecation_list": [],
     }
     return json
 
@@ -245,6 +247,7 @@ def test_from_dict_failure(
         organization="organization",
         omps_operator_version={"operator": "1.0"},
         distribution_scope="null",
+        deprecation_list=[],
     )
 
     add_model_wrong_request_type = {
@@ -270,6 +273,7 @@ def test_from_dict_failure(
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
         "distribution_scope": "null",
+        "deprecation_list": [],
     }
 
     model1 = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
@@ -313,6 +317,7 @@ def test_to_dict_rm(fixture_rm_build_details_json):
         removed_operators=["operator1"],
         organization="organization",
         distribution_scope="null",
+        deprecation_list=[],
     )
 
     model = RmModel.from_dict(fixture_rm_build_details_json).to_dict()
