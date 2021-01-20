@@ -310,6 +310,7 @@ def test_iib_client_no_overwrite_from_index_or_token(
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index=True,
+                deprecation_list=[],
             )
         with pytest.raises(ValueError, match=error_msg):
             iibc.add_bundles(
@@ -320,6 +321,7 @@ def test_iib_client_no_overwrite_from_index_or_token(
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index_token="str",
+                deprecation_list=[],
             )
 
 

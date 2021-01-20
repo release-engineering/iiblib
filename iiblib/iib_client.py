@@ -91,6 +91,7 @@ class IIBClient(object):
         organization=None,
         overwrite_from_index=False,
         overwrite_from_index_token=None,
+        deprecation_list=None,
         raw=False,
     ):
         """Rebuild index image with new bundles to be added.
@@ -156,6 +157,9 @@ class IIBClient(object):
                 "Either both or neither of overwrite-from-index and "
                 "overwrite-from-index-token should be specified."
             )
+
+        if deprecation_list:
+            post_data["deprecation_list"] = deprecation_list
 
         resp = self.iib_session.post("builds/add", json=post_data)
         self._check_response(resp)
