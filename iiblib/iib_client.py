@@ -91,8 +91,8 @@ class IIBClient(object):
         organization=None,
         overwrite_from_index=False,
         overwrite_from_index_token=None,
-        deprecation_list=None,
         raw=False,
+        deprecation_list=None,
     ):
         """Rebuild index image with new bundles to be added.
 
