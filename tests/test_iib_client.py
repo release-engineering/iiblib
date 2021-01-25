@@ -29,6 +29,7 @@ def fixture_add_build_details_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "binary_image": "binary_image",
@@ -43,7 +44,6 @@ def fixture_add_build_details_json():
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
         "distribution_scope": "null",
-        "deprecation_list": [],
     }
     return json
 
@@ -60,6 +60,7 @@ def fixture_rm_build_details_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "binary_image": "binary_image",
@@ -73,7 +74,36 @@ def fixture_rm_build_details_json():
         "removed_operators": ["operator1"],
         "organization": "organization",
         "distribution_scope": "null",
-        "deprecation_list": [],
+    }
+    return json
+
+
+@pytest.fixture
+def fixture_deprecation_list_build_details_json():
+    json = {
+        "id": 2,
+        "arches": ["x86_64"],
+        "state": "in_progress",
+        "state_reason": "state_reason",
+        "request_type": "add",
+        "state_history": [],
+        "batch": 1,
+        "batch_annotations": {"batch_annotations": 1},
+        "logs": {},
+        "deprecation_list": ["deprecation_list"],
+        "updated": "updated",
+        "user": "user@example.com",
+        "binary_image": "binary_image",
+        "binary_image_resolved": "binary_image_resolved",
+        "bundles": ["bundles1"],
+        "bundle_mapping": {"bundle_mapping": "map"},
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "index_image": "index_image",
+        "removed_operators": ["operator1"],
+        "organization": "organization",
+        "omps_operator_version": {"operator": "1.0"},
+        "distribution_scope": "null",
     }
     return json
 
@@ -198,12 +228,18 @@ def test_iib_client(
                 organization="org",
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
+                deprecation_list=None,
             )
             == AddModel.from_dict(fixture_add_build_details_json)
         )
         assert (
             iibc.add_bundles(
-                "index-image", ["bundles-map"], [], binary_image="binary", raw=True
+                "index-image",
+                ["bundles-map"],
+                [],
+                binary_image="binary",
+                raw=True,
+                deprecation_list=None,
             )
             == fixture_add_build_details_json
         )
@@ -310,7 +346,7 @@ def test_iib_client_no_overwrite_from_index_or_token(
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index=True,
-                deprecation_list=[],
+                deprecation_list=None,
             )
         with pytest.raises(ValueError, match=error_msg):
             iibc.add_bundles(
@@ -321,11 +357,66 @@ def test_iib_client_no_overwrite_from_index_or_token(
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index_token="str",
-                deprecation_list=[],
+                deprecation_list=None,
             )
 
 
-# there add model used
+def test_iib_client_deprecation_list(
+    fixture_add_build_details_json,
+    fixture_deprecation_list_build_details_json,
+):
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "POST",
+            "/api/v1/builds/add",
+            status_code=200,
+            json=fixture_add_build_details_json,
+        )
+        iibc = IIBClient("fake-host")
+        assert iibc.add_bundles(
+            "index-image", ["bundles-map"], [], binary_image="binary"
+        ) == AddModel.from_dict(fixture_add_build_details_json)
+
+        assert (
+            iibc.add_bundles(
+                "index-image",
+                ["bundles-map"],
+                [],
+                binary_image="binary",
+                cnr_token="cnr",
+                organization="org",
+                overwrite_from_index=True,
+                overwrite_from_index_token="str",
+                deprecation_list=None,
+            )
+            == AddModel.from_dict(fixture_add_build_details_json)
+        )
+
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "POST",
+            "/api/v1/builds/add",
+            status_code=200,
+            json=fixture_deprecation_list_build_details_json,
+        )
+        iibc = IIBClient("fake-host")
+
+        assert (
+            iibc.add_bundles(
+                "index-image",
+                ["bundles-map"],
+                [],
+                binary_image="binary",
+                cnr_token="cnr",
+                organization="org",
+                overwrite_from_index=True,
+                overwrite_from_index_token="str",
+                deprecation_list=["deprecation_list"],
+            )
+            == AddModel.from_dict(fixture_deprecation_list_build_details_json)
+        )
+
+
 def test_client_wait_for_build(fixture_add_build_details_json):
     iibc = IIBClient("fake-host", poll_interval=1)
     bdetails_finished = copy.copy(fixture_add_build_details_json)

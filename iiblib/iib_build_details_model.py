@@ -229,8 +229,8 @@ class AddModel(IIBBuildDetailsModel):
         "organization",
         "omps_operator_version",
         "distribution_scope",
-        "deprecation_list",
     ]
+
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
@@ -295,7 +295,6 @@ class RmModel(IIBBuildDetailsModel):
         "removed_operators",
         "organization",
         "distribution_scope",
-        "deprecation_list",
     ]
     _operation_attrs = [
         "binary_image",

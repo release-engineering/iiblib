@@ -21,6 +21,7 @@ def fixture_add_build_details_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "binary_image": "binary_image",
@@ -35,7 +36,6 @@ def fixture_add_build_details_json():
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
         "distribution_scope": "null",
-        "deprecation_list": [],
     }
     return json
 
@@ -52,6 +52,7 @@ def fixture_rm_build_details_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "binary_image": "binary_image",
@@ -65,7 +66,6 @@ def fixture_rm_build_details_json():
         "removed_operators": ["operator1"],
         "organization": "organization",
         "distribution_scope": "null",
-        "deprecation_list": [],
     }
     return json
 
@@ -153,6 +153,7 @@ def fixture_bundle_image_missing_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "from_bundle_image": "from_bundle_image",
@@ -233,6 +234,7 @@ def test_from_dict_failure(
         batch=1,
         batch_annotations={"batch_annotations": 1},
         logs={},
+        deprecation_list=[],
         updated="updated",
         user="user@example.com",
         binary_image="binary_image",
@@ -247,7 +249,6 @@ def test_from_dict_failure(
         organization="organization",
         omps_operator_version={"operator": "1.0"},
         distribution_scope="null",
-        deprecation_list=[],
     )
 
     add_model_wrong_request_type = {
@@ -260,6 +261,7 @@ def test_from_dict_failure(
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "binary_image": "binary_image",
@@ -273,7 +275,6 @@ def test_from_dict_failure(
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
         "distribution_scope": "null",
-        "deprecation_list": [],
     }
 
     model1 = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
