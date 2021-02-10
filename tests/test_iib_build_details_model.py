@@ -5,6 +5,7 @@ from iiblib.iib_build_details_model import (
     AddModel,
     RmModel,
     RegenerateBundleModel,
+    MergeIndexImageModel,
 )
 
 
@@ -88,6 +89,33 @@ def fixture_regenerate_bundle_build_details_json():
 
 
 @pytest.fixture
+def fixture_merge_index_image_build_details_json():
+    json = {
+        "id": 4,
+        "arches": ["x86_64"],
+        "state": "in_progress",
+        "state_reason": "state_reason",
+        "request_type": "merge-index-image",
+        "state_history": [],
+        "batch": 1,
+        "batch_annotations": {"batch_annotations": 1},
+        "logs": {},
+        "updated": "updated",
+        "user": "user@example.com",
+        "binary_image": "binary_image",
+        "binary_image_resolved": "binary_image_resolved",
+        "deprecation_list": [],
+        "distribution_scope": "null",
+        "index_image": "index_image",
+        "source_from_index": "source_from_index",
+        "source_from_index_resolved": "source_from_index_resolved",
+        "target_index": "target_index",
+        "target_index_resolved": "target_index_resolved",
+    }
+    return json
+
+
+@pytest.fixture
 def fixture_unknown_request_type_json():
     json = {
         "id": 3,
@@ -154,6 +182,7 @@ def test_from_dict_success(
     fixture_rm_build_details_json,
     fixture_regenerate_bundle_build_details_json,
     fixture_optional_args_missing_json,
+    fixture_merge_index_image_build_details_json,
 ):
 
     model1 = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
@@ -171,6 +200,13 @@ def test_from_dict_success(
 
     model4 = IIBBuildDetailsModel.from_dict(fixture_optional_args_missing_json)
     assert model4 == RegenerateBundleModel(**fixture_optional_args_missing_json)
+
+    model5 = IIBBuildDetailsModel.from_dict(
+        fixture_merge_index_image_build_details_json
+    )
+    assert model5 == MergeIndexImageModel(
+        **fixture_merge_index_image_build_details_json
+    )
 
 
 def test_from_dict_failure(
@@ -249,7 +285,9 @@ def test_from_dict_failure(
         AddModel.from_dict(add_model_wrong_request_type)
 
 
-def test_to_dict(fixture_rm_build_details_json):
+def test_to_dict(
+    fixture_rm_build_details_json, fixture_merge_index_image_build_details_json
+):
 
     rm_model = RmModel(
         id=2,
@@ -275,8 +313,36 @@ def test_to_dict(fixture_rm_build_details_json):
         distribution_scope="null",
     )
 
-    model = RmModel.from_dict(fixture_rm_build_details_json).to_dict()
-    assert model == rm_model.to_dict()
+    mii_model = MergeIndexImageModel(
+        id=4,
+        arches=["x86_64"],
+        state="in_progress",
+        state_reason="state_reason",
+        request_type="merge-index-image",
+        state_history=[],
+        batch=1,
+        batch_annotations={"batch_annotations": 1},
+        logs={},
+        updated="updated",
+        user="user@example.com",
+        binary_image="binary_image",
+        binary_image_resolved="binary_image_resolved",
+        deprecation_list=[],
+        index_image="index_image",
+        distribution_scope="null",
+        source_from_index="source_from_index",
+        source_from_index_resolved="source_from_index_resolved",
+        target_index="target_index",
+        target_index_resolved="target_index_resolved",
+    )
+
+    model1 = RmModel.from_dict(fixture_rm_build_details_json).to_dict()
+    assert model1 == rm_model.to_dict()
+
+    model2 = MergeIndexImageModel.from_dict(
+        fixture_merge_index_image_build_details_json
+    ).to_dict()
+    assert model2 == mii_model.to_dict()
 
 
 def test_general_attributes(fixture_add_build_details_json):
@@ -342,3 +408,19 @@ def test_regenerate_bundle_model_attributes(
     assert model.from_bundle_image == model._data["from_bundle_image"]
     assert model.from_bundle_image_resolved == model._data["from_bundle_image_resolved"]
     assert model.organization == model._data["organization"]
+
+
+def test_merge_index_image_model_attributes(
+    fixture_merge_index_image_build_details_json,
+):
+    model = MergeIndexImageModel.from_dict(fixture_merge_index_image_build_details_json)
+
+    assert model.binary_image == model._data["binary_image"]
+    assert model.binary_image_resolved == model._data["binary_image_resolved"]
+    assert model.deprecation_list == model._data["deprecation_list"]
+    assert model.distribution_scope == model._data["distribution_scope"]
+    assert model.index_image == model._data["index_image"]
+    assert model.source_from_index == model._data["source_from_index"]
+    assert model.source_from_index_resolved == model._data["source_from_index_resolved"]
+    assert model.target_index == model._data["target_index"]
+    assert model.target_index_resolved == model._data["target_index_resolved"]
