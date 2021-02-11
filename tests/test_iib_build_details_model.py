@@ -1,4 +1,4 @@
-import pytest
+from pytest import fixture, raises, mark
 
 from iiblib.iib_build_details_model import (
     IIBBuildDetailsModel,
@@ -9,7 +9,7 @@ from iiblib.iib_build_details_model import (
 )
 
 
-@pytest.fixture
+@fixture
 def fixture_add_build_details_json():
     json = {
         "id": 1,
@@ -38,7 +38,7 @@ def fixture_add_build_details_json():
     return json
 
 
-@pytest.fixture
+@fixture
 def fixture_rm_build_details_json():
     json = {
         "id": 2,
@@ -66,7 +66,7 @@ def fixture_rm_build_details_json():
     return json
 
 
-@pytest.fixture
+@fixture
 def fixture_regenerate_bundle_build_details_json():
     json = {
         "id": 3,
@@ -88,7 +88,7 @@ def fixture_regenerate_bundle_build_details_json():
     return json
 
 
-@pytest.fixture
+@fixture
 def fixture_merge_index_image_build_details_json():
     json = {
         "id": 4,
@@ -115,7 +115,7 @@ def fixture_merge_index_image_build_details_json():
     return json
 
 
-@pytest.fixture
+@fixture
 def fixture_unknown_request_type_json():
     json = {
         "id": 3,
@@ -137,7 +137,7 @@ def fixture_unknown_request_type_json():
     return json
 
 
-@pytest.fixture
+@fixture
 def fixture_bundle_image_missing_json():
     json = {
         "id": 3,
@@ -158,7 +158,7 @@ def fixture_bundle_image_missing_json():
     return json
 
 
-@pytest.fixture
+@fixture
 def fixture_optional_args_missing_json():
     json = {
         "id": 3,
@@ -275,19 +275,17 @@ def test_from_dict_failure(
     model2 = IIBBuildDetailsModel.from_dict(fixture_rm_build_details_json)
     assert model2 != model1
 
-    with pytest.raises(KeyError):
+    with raises(KeyError):
         IIBBuildDetailsModel.from_dict(fixture_bundle_image_missing_json)
 
-    with pytest.raises(KeyError, match=key_error_msg):
+    with raises(KeyError, match=key_error_msg):
         IIBBuildDetailsModel.from_dict(fixture_unknown_request_type_json)
 
-    with pytest.raises(TypeError, match=type_error_msg):
+    with raises(TypeError, match=type_error_msg):
         AddModel.from_dict(add_model_wrong_request_type)
 
 
-def test_to_dict(
-    fixture_rm_build_details_json, fixture_merge_index_image_build_details_json
-):
+def test_to_dict_rm(fixture_rm_build_details_json):
 
     rm_model = RmModel(
         id=2,
@@ -313,6 +311,11 @@ def test_to_dict(
         distribution_scope="null",
     )
 
+    model = RmModel.from_dict(fixture_rm_build_details_json).to_dict()
+    assert model == rm_model.to_dict()
+
+
+def test_to_dict_merg_index_image(fixture_merge_index_image_build_details_json):
     mii_model = MergeIndexImageModel(
         id=4,
         arches=["x86_64"],
@@ -335,18 +338,23 @@ def test_to_dict(
         target_index="target_index",
         target_index_resolved="target_index_resolved",
     )
-
-    model1 = RmModel.from_dict(fixture_rm_build_details_json).to_dict()
-    assert model1 == rm_model.to_dict()
-
-    model2 = MergeIndexImageModel.from_dict(
+    model = MergeIndexImageModel.from_dict(
         fixture_merge_index_image_build_details_json
     ).to_dict()
-    assert model2 == mii_model.to_dict()
+    assert model == mii_model.to_dict()
 
 
-def test_general_attributes(fixture_add_build_details_json):
-    model = AddModel.from_dict(fixture_add_build_details_json)
+@mark.parametrize(
+    "schema",
+    [
+        "fixture_merge_index_image_build_details_json",
+        "fixture_regenerate_bundle_build_details_json",
+        "fixture_rm_build_details_json",
+        "fixture_add_build_details_json",
+    ],
+)
+def test_general_attributes(schema, request):
+    model = IIBBuildDetailsModel.from_dict(request.getfixturevalue(schema))
 
     assert model.id == model._data["id"]
     assert model.arches == model._data["arches"]
@@ -358,8 +366,17 @@ def test_general_attributes(fixture_add_build_details_json):
     assert model.user == model._data["user"]
 
 
-def test_optional_attributes(fixture_add_build_details_json):
-    model = AddModel.from_dict(fixture_add_build_details_json)
+@mark.parametrize(
+    "schema",
+    [
+        "fixture_merge_index_image_build_details_json",
+        "fixture_regenerate_bundle_build_details_json",
+        "fixture_rm_build_details_json",
+        "fixture_add_build_details_json",
+    ],
+)
+def test_optional_attributes(schema, request):
+    model = IIBBuildDetailsModel.from_dict(request.getfixturevalue(schema))
 
     assert model.state_history == model._data["state_history"]
     assert model.batch_annotations == model._data["batch_annotations"]
