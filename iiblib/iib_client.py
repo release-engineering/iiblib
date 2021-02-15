@@ -160,6 +160,8 @@ class IIBClient(object):
 
         if deprecation_list:
             post_data["deprecation_list"] = deprecation_list
+        else:
+            post_data["deprecation_list"] = list()
 
         resp = self.iib_session.post("builds/add", json=post_data)
         self._check_response(resp)

@@ -407,6 +407,7 @@ def test_add_model_attributes(fixture_add_build_details_json):
     assert model.organization == model._data["organization"]
     assert model.omps_operator_version == model._data["omps_operator_version"]
     assert model.distribution_scope == model._data["distribution_scope"]
+    assert model.deprecation_list == model._data["deprecation_list"]
 
 
 def test_rm_model_attributes(fixture_rm_build_details_json):
@@ -422,6 +423,7 @@ def test_rm_model_attributes(fixture_rm_build_details_json):
     assert model.removed_operators == model._data["removed_operators"]
     assert model.organization == model._data["organization"]
     assert model.distribution_scope == model._data["distribution_scope"]
+    assert model.deprecation_list == model._data["deprecation_list"]
 
 
 def test_regenerate_bundle_model_attributes(

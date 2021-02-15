@@ -244,10 +244,8 @@ class AddModel(IIBBuildDetailsModel):
         "organization",
         "omps_operator_version",
         "distribution_scope",
+        "deprecation_list"
     ]
-
-    _optional_attrs = IIBBuildDetailsModel._optional_attrs
-    _optional_attrs.update({"deprecation_list": lambda: list()})
 
     _accepted_request_type = "add"
 
@@ -308,10 +306,8 @@ class RmModel(IIBBuildDetailsModel):
         "removed_operators",
         "organization",
         "distribution_scope",
+        "deprecation_list"
     ]
-
-    _optional_attrs = IIBBuildDetailsModel._optional_attrs
-    _optional_attrs.update({"deprecation_list": lambda: list()})
 
     _accepted_request_type = "rm"
 
