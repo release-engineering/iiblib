@@ -221,6 +221,8 @@ class AddModel(IIBBuildDetailsModel):
         "binary_image_resolved",
         "bundles",
         "bundle_mapping",
+        "deprecation_list",
+        "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
@@ -228,7 +230,6 @@ class AddModel(IIBBuildDetailsModel):
         "removed_operators",
         "organization",
         "omps_operator_version",
-        "distribution_scope",
     ]
 
     _operation_attrs = [
@@ -236,6 +237,8 @@ class AddModel(IIBBuildDetailsModel):
         "binary_image_resolved",
         "bundles",
         "bundle_mapping",
+        "deprecation_list",
+        "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
@@ -243,8 +246,6 @@ class AddModel(IIBBuildDetailsModel):
         "removed_operators",
         "organization",
         "omps_operator_version",
-        "distribution_scope",
-        "deprecation_list"
     ]
 
     _accepted_request_type = "add"
@@ -286,27 +287,28 @@ class RmModel(IIBBuildDetailsModel):
         "binary_image_resolved",
         "bundles",
         "bundle_mapping",
+        "deprecation_list",
+        "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
-        "removed_operators",
         "organization",
-        "distribution_scope",
+        "removed_operators",
     ]
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
         "bundles",
         "bundle_mapping",
+        "deprecation_list",
+        "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
-        "removed_operators",
         "organization",
-        "distribution_scope",
-        "deprecation_list"
+        "removed_operators",
     ]
 
     _accepted_request_type = "rm"
