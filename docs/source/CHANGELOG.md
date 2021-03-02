@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+- added index_image_resolved attribute
+
 ## 2.2.0 - 2021-02-15
 
 ### Added
