@@ -100,6 +100,7 @@ def fixture_deprecation_list_build_details_json():
         "from_index": "from_index",
         "from_index_resolved": "from_index_resolved",
         "index_image": "index_image",
+        "index_image_resolved": "index_image_resolved",
         "removed_operators": ["operator1"],
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
@@ -228,7 +229,6 @@ def test_iib_client(
                 organization="org",
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
-                deprecation_list=None,
             )
             == AddModel.from_dict(fixture_add_build_details_json)
         )
@@ -239,7 +239,6 @@ def test_iib_client(
                 [],
                 binary_image="binary",
                 raw=True,
-                deprecation_list=None,
             )
             == fixture_add_build_details_json
         )
@@ -346,7 +345,6 @@ def test_iib_client_no_overwrite_from_index_or_token(
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index=True,
-                deprecation_list=None,
             )
         with pytest.raises(ValueError, match=error_msg):
             iibc.add_bundles(
@@ -357,7 +355,6 @@ def test_iib_client_no_overwrite_from_index_or_token(
                 cnr_token="cnr",
                 organization="org",
                 overwrite_from_index_token="str",
-                deprecation_list=None,
             )
 
 
@@ -387,7 +384,6 @@ def test_iib_client_deprecation_list(
                 organization="org",
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
-                deprecation_list=None,
             )
             == AddModel.from_dict(fixture_add_build_details_json)
         )
@@ -408,10 +404,10 @@ def test_iib_client_deprecation_list(
                 [],
                 binary_image="binary",
                 cnr_token="cnr",
+                deprecation_list=["deprecation_list"],
                 organization="org",
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
-                deprecation_list=["deprecation_list"],
             )
             == AddModel.from_dict(fixture_deprecation_list_build_details_json)
         )
