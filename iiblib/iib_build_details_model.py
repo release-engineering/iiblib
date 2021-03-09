@@ -200,6 +200,10 @@ class AddModel(IIBBuildDetailsModel):
             A list of bundles to be added to index image
         bundle_mapping (dict)
             Operator names in "bundles" map to: list of "bundles" which map to the operator key
+        deprecation_list (list)
+            A list of bundles to be deprecated from the new index image
+        distribution_scope (str)
+            A distribution where is the product used (prod, stage, etc.)
         from_index (str)
             A reference of index image used as source for rebuild
         from_index_resolved (str)
@@ -212,8 +216,6 @@ class AddModel(IIBBuildDetailsModel):
             A name of organization to push to in the legacy app registry
         omps_operator_version (dict)
             An operator version returned from OMPS API call used for Add request
-        distribution_scope (str)
-            A distribution where is the product used (prod, stage, etc.)
     """
 
     __slots__ = [
@@ -221,6 +223,8 @@ class AddModel(IIBBuildDetailsModel):
         "binary_image_resolved",
         "bundles",
         "bundle_mapping",
+        "deprecation_list",
+        "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
@@ -228,7 +232,6 @@ class AddModel(IIBBuildDetailsModel):
         "removed_operators",
         "organization",
         "omps_operator_version",
-        "distribution_scope",
     ]
 
     _operation_attrs = [
@@ -236,6 +239,8 @@ class AddModel(IIBBuildDetailsModel):
         "binary_image_resolved",
         "bundles",
         "bundle_mapping",
+        "deprecation_list",
+        "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
@@ -243,7 +248,6 @@ class AddModel(IIBBuildDetailsModel):
         "removed_operators",
         "organization",
         "omps_operator_version",
-        "distribution_scope",
     ]
 
     _accepted_request_type = "add"
@@ -266,6 +270,10 @@ class RmModel(IIBBuildDetailsModel):
             A list of bundles to be added to index image
         bundle_mapping (dict)
             Operator names in "bundles" map to: list of "bundles" which map to the operator key
+        deprecation_list (list)
+            A list of bundles to be deprecated from the new index image
+        distribution_scope (str)
+            A distribution where is the product used (prod, stage, etc.)
         from_index (str)
             A reference of index image used as source for rebuild
         from_index_resolved (str)
@@ -276,8 +284,6 @@ class RmModel(IIBBuildDetailsModel):
             A list of operators to be removed from index image
         organization (str)
             A name of organization to push to in the legacy app registry
-        distribution_scope (str)
-            A distribution where is the product used (prod, stage, etc.)
     """
 
     __slots__ = [
@@ -285,26 +291,28 @@ class RmModel(IIBBuildDetailsModel):
         "binary_image_resolved",
         "bundles",
         "bundle_mapping",
+        "deprecation_list",
+        "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
-        "removed_operators",
         "organization",
-        "distribution_scope",
+        "removed_operators",
     ]
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
         "bundles",
         "bundle_mapping",
+        "deprecation_list",
+        "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
-        "removed_operators",
         "organization",
-        "distribution_scope",
+        "removed_operators",
     ]
 
     _accepted_request_type = "rm"

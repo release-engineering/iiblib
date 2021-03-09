@@ -88,6 +88,7 @@ class IIBClient(object):
         arches,
         binary_image=None,
         cnr_token=None,
+        deprecation_list=None,
         organization=None,
         overwrite_from_index=False,
         overwrite_from_index_token=None,
@@ -106,6 +107,8 @@ class IIBClient(object):
                 optional. Image with binary used to rebuild existing index image
             cnr_token (srt)
                 optional. CNR token.
+            deprecation_list (list)
+                optional. A list of bundles to be deprecated from the new index image
             organization (str)
                 optional. Name of the organization in the legacy app registry.
             overwrite_from_index (bool)
@@ -128,6 +131,7 @@ class IIBClient(object):
         post_data = {
             "from_index": index_image,
             "add_arches": arches,
+            "deprecation_list": [],
         }
 
         if binary_image:
@@ -156,6 +160,9 @@ class IIBClient(object):
                 "Either both or neither of overwrite-from-index and "
                 "overwrite-from-index-token should be specified."
             )
+
+        if deprecation_list:
+            post_data["deprecation_list"] = deprecation_list
 
         resp = self.iib_session.post("builds/add", json=post_data)
         self._check_response(resp)

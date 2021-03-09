@@ -32,6 +32,7 @@ def fixture_add_build_details_json():
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
         "distribution_scope": "null",
+        "deprecation_list": [],
     }
     return json
 
@@ -62,6 +63,7 @@ def fixture_add_build_details_json2():
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
         "distribution_scope": "null",
+        "deprecation_list": [],
     }
     return json
 

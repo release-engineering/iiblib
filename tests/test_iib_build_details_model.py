@@ -21,6 +21,7 @@ def fixture_add_build_details_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "binary_image": "binary_image",
@@ -51,6 +52,7 @@ def fixture_rm_build_details_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "binary_image": "binary_image",
@@ -151,6 +153,7 @@ def fixture_bundle_image_missing_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "from_bundle_image": "from_bundle_image",
@@ -231,6 +234,7 @@ def test_from_dict_failure(
         batch=1,
         batch_annotations={"batch_annotations": 1},
         logs={},
+        deprecation_list=[],
         updated="updated",
         user="user@example.com",
         binary_image="binary_image",
@@ -257,6 +261,7 @@ def test_from_dict_failure(
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "logs": {},
+        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
         "binary_image": "binary_image",
@@ -313,6 +318,7 @@ def test_to_dict_rm(fixture_rm_build_details_json):
         removed_operators=["operator1"],
         organization="organization",
         distribution_scope="null",
+        deprecation_list=[],
     )
 
     model = RmModel.from_dict(fixture_rm_build_details_json).to_dict()
@@ -401,6 +407,7 @@ def test_add_model_attributes(fixture_add_build_details_json):
     assert model.organization == model._data["organization"]
     assert model.omps_operator_version == model._data["omps_operator_version"]
     assert model.distribution_scope == model._data["distribution_scope"]
+    assert model.deprecation_list == model._data["deprecation_list"]
 
 
 def test_rm_model_attributes(fixture_rm_build_details_json):
@@ -416,6 +423,7 @@ def test_rm_model_attributes(fixture_rm_build_details_json):
     assert model.removed_operators == model._data["removed_operators"]
     assert model.organization == model._data["organization"]
     assert model.distribution_scope == model._data["distribution_scope"]
+    assert model.deprecation_list == model._data["deprecation_list"]
 
 
 def test_regenerate_bundle_model_attributes(
