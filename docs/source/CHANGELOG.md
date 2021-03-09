@@ -7,7 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
-- added index_image_resolved attribute
+## 3.0.0 - 2021-03-19
+
+### Added
+ - index_image_resolved attribute
+ - deprecation_list attribute to AddModel
+ - deprecation_list parameter to add_bundles function
 
 ## 2.2.0 - 2021-02-15
 
