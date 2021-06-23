@@ -13,6 +13,7 @@ from iiblib.iib_build_details_model import (
     AddModel,
     RmModel,
     RegenerateBundleModel,
+    CreateEmptyIndexModel,
 )
 from iiblib.iib_build_details_pager import IIBBuildDetailsPager
 
@@ -132,6 +133,32 @@ def fixture_regenerate_bundle_build_details_json():
 
 
 @pytest.fixture
+def fixture_create_empty_index_build_details_json():
+    json = {
+        "id": 3,
+        "arches": ["x86_64"],
+        "batch": 1,
+        "batch_annotations": {"batch_annotations": 1},
+        "binary_image": "binary_image",
+        "binary_image_resolved": "binary_image_resolved",
+        "distribution_scope": "distribution_scope",
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "index_image": "index_image",
+        "index_image_resolved": "index_image_resolved",
+        "labels": {"version": "v1"},
+        "logs": {},
+        "request_type": "create-empty-index",
+        "state": "in_progress",
+        "state_history": [],
+        "state_reason": "state_reason",
+        "updated": "updated",
+        "user": "user@example.com",
+    }
+    return json
+
+
+@pytest.fixture
 def fixture_builds_page1_json(fixture_add_build_details_json):
     json = {
         "items": [fixture_add_build_details_json],
@@ -171,6 +198,7 @@ def test_iib_client(
     fixture_add_build_details_json,
     fixture_rm_build_details_json,
     fixture_regenerate_bundle_build_details_json,
+    fixture_create_empty_index_build_details_json,
     fixture_builds_page1_json,
 ):
     with requests_mock.Mocker() as m:
@@ -194,6 +222,12 @@ def test_iib_client(
             json=fixture_regenerate_bundle_build_details_json,
         )
         m.register_uri(
+            "POST",
+            "/api/v1/builds/create-empty-index",
+            status_code=200,
+            json=fixture_create_empty_index_build_details_json,
+        )
+        m.register_uri(
             "GET", "/api/v1/builds", status_code=200, json=fixture_builds_page1_json
         )
         m.register_uri(
@@ -213,6 +247,12 @@ def test_iib_client(
             "/api/v1/builds/3",
             status_code=200,
             json=fixture_regenerate_bundle_build_details_json,
+        )
+        m.register_uri(
+            "GET",
+            "/api/v1/builds/4",
+            status_code=200,
+            json=fixture_create_empty_index_build_details_json,
         )
 
         iibc = IIBClient("fake-host")
@@ -273,6 +313,23 @@ def test_iib_client(
             == fixture_regenerate_bundle_build_details_json
         )
 
+        assert iibc.create_empty_index(
+            index_image="from_index",
+            binary_image="binary_image",
+            labels={"version": "v1"},
+        ) == CreateEmptyIndexModel.from_dict(
+            fixture_create_empty_index_build_details_json
+        )
+        assert (
+            iibc.create_empty_index(
+                index_image="from_index",
+                binary_image="binary_image",
+                labels={"version": "v1"},
+                raw=True,
+            )
+            == fixture_create_empty_index_build_details_json
+        )
+
         # get_builds - request_type is "add"
         assert iibc.get_build(1) == IIBBuildDetailsModel.from_dict(
             fixture_add_build_details_json
@@ -291,6 +348,13 @@ def test_iib_client(
         )
         assert (
             iibc.get_build(3, raw=True) == fixture_regenerate_bundle_build_details_json
+        )
+        # get_builds - request_type is "create-empty-index"
+        assert iibc.get_build(4) == IIBBuildDetailsModel.from_dict(
+            fixture_create_empty_index_build_details_json
+        )
+        assert (
+            iibc.get_build(4, raw=True) == fixture_create_empty_index_build_details_json
         )
 
         assert iibc.get_builds() == IIBBuildDetailsPager.from_dict(
