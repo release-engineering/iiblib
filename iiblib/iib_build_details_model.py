@@ -413,3 +413,58 @@ class MergeIndexImageModel(IIBBuildDetailsModel):
     ]
 
     _accepted_request_type = "merge-index-image"
+
+
+class CreateEmptyIndexModel(IIBBuildDetailsModel):
+    """
+    CreateEmptyIndexModel class handling data from
+    "builds/create-empty-index
+    " endpoint, and data from "builds"
+    and "builds/<id>" IIB endpoints defined by
+    "create-empty-index" request_type.
+    CreateEmptyIndexMode class inherits arguments from
+    IIBBuildDetailsModel.
+    For a complete list of arguments check IIBBuildDetailsModel.
+
+    Args:
+        binary_image (str)
+            A reference of binary image used for rebuilding
+        binary_image_resolved (str)
+            A checksum reference of binary image that was used for rebuilding
+        distribution_scope (str)
+            The scope of distribution for the index created by the request.
+            This will determine what level of protection the addition will have.
+        from_index (str)
+            A reference of index image used as source for rebuild
+        from_index_resolved (str)
+            A reference of new index image
+        index_image (str)
+            A reference of index image to rebuild
+        index_image_resolved (str)
+            An index image that will be used as a base for the new index image.
+        labels (dict)
+            A dictionary of labels used for creation of index image
+    """
+
+    __slots__ = [
+        "binary_image",
+        "binary_image_resolved",
+        "distribution_scope",
+        "from_index",
+        "from_index_resolved",
+        "index_image",
+        "index_image_resolved",
+        "labels",
+    ]
+    _operation_attrs = [
+        "binary_image",
+        "binary_image_resolved",
+        "distribution_scope",
+        "from_index",
+        "from_index_resolved",
+        "index_image",
+        "index_image_resolved",
+        "labels",
+    ]
+
+    _accepted_request_type = "create-empty-index"

@@ -6,13 +6,14 @@ from .iib_build_details_model import (
     RmModel,
     AddModel,
     RegenerateBundleModel,
+    CreateEmptyIndexModel,
 )
 from .iib_authentication import IIBAuth
 from .iib_session import IIBSession
 
 
 class IIBException(Exception):
-    """ General IIB exception"""
+    """General IIB exception"""
 
     pass
 
@@ -340,6 +341,44 @@ class IIBClient(object):
         if raw:
             return resp.json()
         return RegenerateBundleModel.from_dict(resp.json())
+
+    def create_empty_index(
+        self, index_image, binary_image=None, labels=None, raw=False
+    ):
+        """Create and empty index image.
+
+        Args:
+            index_image (str)
+               Index image ref used as source to rebuild
+            binary_image (str)
+               optional. Image with binary used to rebuild existing index image
+            labels (dict)
+               optional. A Dictionary of additional labels which belong to an index image
+            raw (bool)
+               Return raw json response instead of model instance
+
+        Returns:
+           `CreateEmptyIndexModel` or dict
+            if raw == True return dict with json response otherwise
+            return `CreateEmptyIndexModel` instance.
+        """
+
+        post_data = {
+            "from_index": index_image,
+        }
+
+        if binary_image:
+            post_data["binary_image"] = binary_image
+
+        if labels:
+            post_data["labels"] = labels
+
+        resp = self.iib_session.post("builds/create-empty-index", json=post_data)
+        self._check_response(resp)
+
+        if raw:
+            return resp.json()
+        return CreateEmptyIndexModel.from_dict(resp.json())
 
     def rebuild_index(self, index_image):
         raise NotImplementedError
