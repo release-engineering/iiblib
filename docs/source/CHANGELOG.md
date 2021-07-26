@@ -7,8 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 4.0.0 - 2021-07-26
+
 ### Added
  - CreateEmptyIndexModel and functionality
+ - create_empty_index function in iib_client.py
 
 ## 3.0.0 - 2021-03-19
 
