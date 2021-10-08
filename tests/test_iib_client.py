@@ -271,6 +271,7 @@ def test_iib_client(
                 organization="org",
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
+                build_tags=["extra-tag1"],
             )
             == AddModel.from_dict(fixture_add_build_details_json)
         )
