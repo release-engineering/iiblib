@@ -291,6 +291,7 @@ def test_iib_client(
                 ["operator1"],
                 [],
                 binary_image="binary",
+                build_tags=["v4.5-2020-10-10"],
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
             )
