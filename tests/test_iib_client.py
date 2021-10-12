@@ -92,6 +92,7 @@ def fixture_deprecation_list_build_details_json():
         "state_history": [],
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
+        "build_tags": [],
         "logs": {},
         "deprecation_list": ["deprecation_list"],
         "updated": "updated",
@@ -258,23 +259,22 @@ def test_iib_client(
         )
 
         iibc = IIBClient("fake-host")
-        assert iibc.add_bundles(
+        ret = iibc.add_bundles(
             "index-image", ["bundles-map"], [], binary_image="binary"
-        ) == AddModel.from_dict(fixture_add_build_details_json)
-        assert (
-            iibc.add_bundles(
-                "index-image",
-                ["bundles-map"],
-                [],
-                binary_image="binary",
-                cnr_token="cnr",
-                organization="org",
-                overwrite_from_index=True,
-                overwrite_from_index_token="str",
-                build_tags=["extra-tag1"],
-            )
-            == AddModel.from_dict(fixture_add_build_details_json)
         )
+        assert ret == AddModel.from_dict(fixture_add_build_details_json)
+        ret = iibc.add_bundles(
+            "index-image",
+            ["bundles-map"],
+            [],
+            binary_image="binary",
+            cnr_token="cnr",
+            organization="org",
+            overwrite_from_index=True,
+            overwrite_from_index_token="str",
+            build_tags=["extra-tag1"],
+        )
+        assert ret == AddModel.from_dict(fixture_add_build_details_json)
         assert (
             iibc.add_bundles(
                 "index-image",

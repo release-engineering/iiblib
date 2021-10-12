@@ -238,6 +238,7 @@ class AddModel(IIBBuildDetailsModel):
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
+        "build_tags",
         "bundles",
         "bundle_mapping",
         "deprecation_list",
@@ -305,6 +306,7 @@ class RmModel(IIBBuildDetailsModel):
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
+        "build_tags",
         "bundle_mapping",
         "bundles",
         "deprecation_list",
@@ -406,6 +408,7 @@ class MergeIndexImageModel(IIBBuildDetailsModel):
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
+        "build_tags",
         "deprecation_list",
         "distribution_scope",
         "index_image",

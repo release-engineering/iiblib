@@ -228,6 +228,9 @@ class IIBClient(object):
         if binary_image:
             post_data["binary_image"] = binary_image
 
+        if build_tags:
+            post_data["build_tags"] = build_tags
+
         if overwrite_from_index:
             if overwrite_from_index_token:
                 post_data["overwrite_from_index"] = overwrite_from_index
