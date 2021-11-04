@@ -88,6 +88,7 @@ class IIBClient(object):
         bundles,
         arches,
         binary_image=None,
+        build_tags=None,
         cnr_token=None,
         deprecation_list=None,
         organization=None,
@@ -102,6 +103,9 @@ class IIBClient(object):
                 Index image ref used as source to rebuild
             bundles (list)
                 List of references to bundle images to be added to index image
+            build_tags (list)
+                optional. List of extra tags which should be applied to built
+                index image in temp namespace
             arches (list)
                 List of architectures supported in new index image
             binary_image (str)
@@ -141,6 +145,9 @@ class IIBClient(object):
         if bundles:
             post_data["bundles"] = bundles
 
+        if build_tags:
+            post_data["build_tags"] = build_tags
+
         if cnr_token:
             post_data["cnr_token"] = cnr_token
 
@@ -178,6 +185,7 @@ class IIBClient(object):
         operators,
         arches,
         binary_image=None,
+        build_tags=None,
         overwrite_from_index=False,
         overwrite_from_index_token=None,
         raw=False,
@@ -193,6 +201,8 @@ class IIBClient(object):
                 List of architectures supported in new index image
             binary_image (str)
                 optional. Image with binary used to rebuild existing index image
+            build_tags (list)
+                optional. List of extra tags applied to built index image in temp namespace
             overwrite_from_index (bool)
                 optional. Indicates if resulting index_image needs to be
                 overwritten at the location of from_index. If this is provided,
@@ -217,6 +227,9 @@ class IIBClient(object):
 
         if binary_image:
             post_data["binary_image"] = binary_image
+
+        if build_tags:
+            post_data["build_tags"] = build_tags
 
         if overwrite_from_index:
             if overwrite_from_index_token:

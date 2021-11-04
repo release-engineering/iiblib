@@ -221,22 +221,24 @@ class AddModel(IIBBuildDetailsModel):
     __slots__ = [
         "binary_image",
         "binary_image_resolved",
-        "bundles",
+        "build_tags",
         "bundle_mapping",
+        "bundles",
         "deprecation_list",
         "distribution_scope",
         "from_index",
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
-        "removed_operators",
-        "organization",
         "omps_operator_version",
+        "organization",
+        "removed_operators",
     ]
 
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
+        "build_tags",
         "bundles",
         "bundle_mapping",
         "deprecation_list",
@@ -289,6 +291,7 @@ class RmModel(IIBBuildDetailsModel):
     __slots__ = [
         "binary_image",
         "binary_image_resolved",
+        "build_tags",
         "bundles",
         "bundle_mapping",
         "deprecation_list",
@@ -303,8 +306,9 @@ class RmModel(IIBBuildDetailsModel):
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
-        "bundles",
+        "build_tags",
         "bundle_mapping",
+        "bundles",
         "deprecation_list",
         "distribution_scope",
         "from_index",
@@ -392,6 +396,7 @@ class MergeIndexImageModel(IIBBuildDetailsModel):
     __slots__ = [
         "binary_image",
         "binary_image_resolved",
+        "build_tags",
         "deprecation_list",
         "distribution_scope",
         "index_image",
@@ -403,6 +408,7 @@ class MergeIndexImageModel(IIBBuildDetailsModel):
     _operation_attrs = [
         "binary_image",
         "binary_image_resolved",
+        "build_tags",
         "deprecation_list",
         "distribution_scope",
         "index_image",

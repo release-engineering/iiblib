@@ -29,6 +29,7 @@ def fixture_add_build_details_json():
         "state_history": [],
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
+        "build_tags": ["v4.5-2020-10-10"],
         "logs": {},
         "deprecation_list": [],
         "updated": "updated",
@@ -60,6 +61,7 @@ def fixture_rm_build_details_json():
         "state_history": [],
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
+        "build_tags": ["v4.5-2020-10-10"],
         "logs": {},
         "deprecation_list": [],
         "updated": "updated",
@@ -90,6 +92,7 @@ def fixture_deprecation_list_build_details_json():
         "state_history": [],
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
+        "build_tags": [],
         "logs": {},
         "deprecation_list": ["deprecation_list"],
         "updated": "updated",
@@ -256,22 +259,22 @@ def test_iib_client(
         )
 
         iibc = IIBClient("fake-host")
-        assert iibc.add_bundles(
+        ret = iibc.add_bundles(
             "index-image", ["bundles-map"], [], binary_image="binary"
-        ) == AddModel.from_dict(fixture_add_build_details_json)
-        assert (
-            iibc.add_bundles(
-                "index-image",
-                ["bundles-map"],
-                [],
-                binary_image="binary",
-                cnr_token="cnr",
-                organization="org",
-                overwrite_from_index=True,
-                overwrite_from_index_token="str",
-            )
-            == AddModel.from_dict(fixture_add_build_details_json)
         )
+        assert ret == AddModel.from_dict(fixture_add_build_details_json)
+        ret = iibc.add_bundles(
+            "index-image",
+            ["bundles-map"],
+            [],
+            binary_image="binary",
+            cnr_token="cnr",
+            organization="org",
+            overwrite_from_index=True,
+            overwrite_from_index_token="str",
+            build_tags=["extra-tag1"],
+        )
+        assert ret == AddModel.from_dict(fixture_add_build_details_json)
         assert (
             iibc.add_bundles(
                 "index-image",
@@ -288,6 +291,7 @@ def test_iib_client(
                 ["operator1"],
                 [],
                 binary_image="binary",
+                build_tags=["v4.5-2020-10-10"],
                 overwrite_from_index=True,
                 overwrite_from_index_token="str",
             )
