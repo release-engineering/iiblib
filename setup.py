@@ -53,7 +53,7 @@ long_description = read_content("README.md") + read_content(
     os.path.join("docs/source", "CHANGELOG.md")
 )
 
-INSTALL_REQUIRES = ["requests", "requests-kerberos", "six"]
+INSTALL_REQUIRES = ["requests", "requests-kerberos", "six", "kerberos"]
 
 extras_require = {"reST": ["Sphinx"]}
 
