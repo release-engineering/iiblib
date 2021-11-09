@@ -1,3 +1,4 @@
 requests>=2.4.2
 requests-kerberos
 six
+kerberos
