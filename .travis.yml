@@ -3,34 +3,27 @@ language: python
 install: pip install tox
 matrix:
   include:
-  - python: "2.7"
+  - python: '2.7'
     env: TOX_ENV=py27
-  - python: "3.7"
+  - python: '3.7'
     env: TOX_ENV=py37
-  - python: "3.7"
+  - python: '3.7'
     env: TOX_ENV=pycodestyle
-  - python: "3.7.9"
+  - python: 3.7.9
     env: TOX_ENV=pidiff
-  - python: "3.7"
+  - python: '3.7'
     env: TOX_ENV=cov-travis DEPLOY=1
-  - python: "3.7"
+  - python: '3.7'
     env: TOX_ENV=docs
 script: tox -e $TOX_ENV
 after_success:
 - test $TOX_ENV = docs && scripts/push-docs
-
 deploy:
-  # Adding a new tag automatically releases to PyPI.
   provider: pypi
   user: __token__
   password:
-    secure: NymjXDoM/g0S6cqh4+v6fv0Mf14iLpiZRQMiWs6zIIP4IrHQAkLkJRngop20tM7ivJbnGsfGd7qLNjrIWfSb6eGkx6xLZpEvMJn95Fny+pc5DbHRORX14vcXC8XyNLeTU4BW0CpLKPDTlTIjWAlRq0lXjwBG2+Pe8pvHJcZB9jfPvjzV+VzKAyRncNVhRt+ce+9VZm3bF2lSbXVhcFlAEvclTJHPxRyfLh4VYDVXMdgIDckcOQLnNq8+8uqBVEweQQUO8GYqIS55KouglNK6slpk1VJcp4cVMMer1V/Hc8noZHUMibGEqQDotUcgfGTtRTl1P3soxhhprh7ISVy3oL0/ZnCu44IG7k6hBCg7w87LhuBtHtbkMAsJY8yJ/sjj9gJBULtuRgx6Sz5K+4/pvfRErb/F3Xmgw/SPICBMI4oxvQUB51YAfeywruv4r54nRBkWBDn3fCzORvOEU0HSlPK/rMINDcAB6pExbdn8WbUDVN5CbSPwFdDRxG3Ai41peD0x6Bw17562VPaVHx5U6Q+wBWqDH3Dg8IjM+9ndcaO6SP70JVqWfFe0BxEFRV+g4026AJE46J8BM11yfcB5+LgF/hOucSWWjf5doTQemZYgVtey33823EhhD8Z7qN84lnfc2cSQrtzSTGkspjd4jFaT0UsahrPh2xLjghTmpm0=
+    secure: JcDTfIQLhgDlBR/j8kTSF8+pX27fnqT8BlFYQCbTrc7e9MMp1wtZljtJ8qz+9aKfCK+Xb8AmIdYbuGidFlWFtdHx3Y96/SnWoXsw5Dw+ZRtrf6beZh2oGfzDMLZ4reLvsgyaeofe2H1Ln2ooo5AOYMCKFBQ5nQeOObojel1HMNAk1B5kTTm8d9rSlwFtX0t6I2cZmGjSn2tC1Zy0io+/dr6+xDqmxurX17QJGZ8tkqlCsuGR1RM0NncUOPf/Qtfn58O8VclLYqEWHZ+TIBfWRCWZyMGRrpuSUbNWrQg90eeRrU3zs+rWFgdQoz17Bb301XWAMq3nccco63vc1psm5T2sGoz8y/859+RaZO59tHFEMsmoDfIgxMO4ffwR1yd8AmSqCT0Lf+Fdaf2G7vdOyQ3JkFKJa5VS+3vqs+NX0hicSZWRNos/4r+SH93NWu14HyIvez2GzWsB7wmjhCYLZKK+wGFZ4+Bd6Nd99P7j5SpKrx33E3AnoXx1PEr4txOMTO8UHcfQ94qyYuXUOqSJJkZqKDWK68v4wa+2x/bi1bLZHS49FWjK90LMA8kXBesMo0FN8dJ3/WP828BFbw4B/U6uTEOhXTdabMpJSqZXTp0MLcOGZubvdroWknpnmR7Axb9anIHYwQ3pKh+FNjuIJ8CibvjXYkKSHsho/iNvPi4=
   on:
     tags: true
-    # Only one of the environments in the matrix should have
-    # deployments enabled. It's mostly arbitrary which one,
-    # but best to select some Python 3.x so up-to-date tools
-    # are used during release.
-    condition: $DEPLOY = 1
+    condition: "$DEPLOY = 1"
   skip_existing: true
-
