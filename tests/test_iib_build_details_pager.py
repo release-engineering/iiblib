@@ -43,16 +43,16 @@ def fixture_add_build_details_json2():
     json = {
         "id": 2,
         "arches": ["x86_64"],
-        "state": "in_progress",
+        "state": "complete",
         "state_reason": "state_reason",
-        "request_type": "add",
+        "request_type": "rm",
         "state_history": [],
         "batch": 2,
         "batch_annotations": {"batch_annotations": 2},
         "build_tags": [],
         "logs": {},
         "updated": "updated",
-        "user": "user@example.com",
+        "user": "foo@bar.com",
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
         "bundles": ["bundles1"],
@@ -104,6 +104,40 @@ def fixture_builds_page2_json(fixture_add_build_details_json2):
         },
     }
     return json
+
+
+@pytest.fixture
+def fixture_builds_filtered_json(fixture_add_build_details_json2):
+    json = {
+        "items": [fixture_add_build_details_json2],
+        "meta": {
+            "first": "",
+            "last": "",
+            "next": "",
+            "page": 1,
+            "pages": 1,
+            "per_page": 1,
+            "previous": "",
+            "total": 1,
+        },
+    }
+    return json
+
+
+def test_iib_build_details_filter(fixture_builds_filtered_json):
+    with requests_mock.Mocker() as m:
+        m.register_uri(
+            "GET",
+            "/api/v1/builds?request_type=rm&user=foo%40bar.com&state=complete",
+            status_code=200,
+            json=fixture_builds_filtered_json,
+        )
+
+        iibc = IIBClient("fake-host")
+        pager = iibc.get_builds(request_type="rm", user="foo@bar.com", state="complete")
+        assert pager.items() == [
+            IIBBuildDetailsModel.from_dict(fixture_builds_filtered_json["items"][0])
+        ]
 
 
 def test_iib_build_details_pager(
