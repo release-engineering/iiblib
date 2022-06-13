@@ -33,6 +33,8 @@ def fixture_add_build_details_json():
         "from_index_resolved": "from_index_resolved",
         "index_image": "index_image",
         "index_image_resolved": "index_image_resolved",
+        "internal_index_image_copy": "internal_index_image_copy",
+        "internal_index_image_copy_resolved": "index_image_copy_resolved",
         "removed_operators": ["operator1"],
         "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
@@ -65,6 +67,8 @@ def fixture_rm_build_details_json():
         "from_index_resolved": "from_index_resolved",
         "index_image": "index_image",
         "index_image_resolved": "index_image_resolved",
+        "internal_index_image_copy": "internal_index_image_copy",
+        "internal_index_image_copy_resolved": "index_image_copy_resolved",
         "removed_operators": ["operator1"],
         "organization": "organization",
         "distribution_scope": "null",
@@ -249,6 +253,8 @@ def test_from_dict_failure(
         from_index_resolved="from_index_resolved",
         index_image="index_image",
         index_image_resolved="index_image_resolved",
+        internal_index_image_copy="internal_index_image_copy",
+        internal_index_image_copy_resolved="index_image_copy_resolved",
         removed_operators=["operator1"],
         organization="organization",
         omps_operator_version={"operator": "1.0"},
@@ -320,6 +326,8 @@ def test_to_dict_rm(fixture_rm_build_details_json):
         from_index_resolved="from_index_resolved",
         index_image="index_image",
         index_image_resolved="index_image_resolved",
+        internal_index_image_copy="internal_index_image_copy",
+        internal_index_image_copy_resolved="index_image_copy_resolved",
         removed_operators=["operator1"],
         organization="organization",
         distribution_scope="null",
@@ -409,6 +417,14 @@ def test_add_model_attributes(fixture_add_build_details_json):
     assert model.from_index == model._data["from_index"]
     assert model.from_index_resolved == model._data["from_index_resolved"]
     assert model.index_image == model._data["index_image"]
+    assert (
+        model.internal_index_image_copy
+        == model._data["internal_index_image_copy"]
+    )
+    assert (
+        model.internal_index_image_copy_resolved
+        == model._data["internal_index_image_copy_resolved"]
+    )
     assert model.removed_operators == model._data["removed_operators"]
     assert model.organization == model._data["organization"]
     assert model.omps_operator_version == model._data["omps_operator_version"]
@@ -426,6 +442,14 @@ def test_rm_model_attributes(fixture_rm_build_details_json):
     assert model.from_index == model._data["from_index"]
     assert model.from_index_resolved == model._data["from_index_resolved"]
     assert model.index_image == model._data["index_image"]
+    assert (
+        model.internal_index_image_copy
+        == model._data["internal_index_image_copy"]
+    )
+    assert (
+        model.internal_index_image_copy_resolved
+        == model._data["internal_index_image_copy_resolved"]
+    )
     assert model.removed_operators == model._data["removed_operators"]
     assert model.organization == model._data["organization"]
     assert model.distribution_scope == model._data["distribution_scope"]
