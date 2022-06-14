@@ -210,6 +210,10 @@ class AddModel(IIBBuildDetailsModel):
             A reference of new index image
         index_image (str)
             A reference of index image to rebuild
+        internal_index_image_copy (str)
+            A reference of IIB's internal copy of the built index image
+        internal_index_image_copy_resolved (str)
+            A reference of resolved IIB's internal copy of the built index image
         removed_operators (list)
             A list of operators to be removed from index image
         organization (str)
@@ -230,6 +234,8 @@ class AddModel(IIBBuildDetailsModel):
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
+        "internal_index_image_copy",
+        "internal_index_image_copy_resolved",
         "omps_operator_version",
         "organization",
         "removed_operators",
@@ -247,6 +253,8 @@ class AddModel(IIBBuildDetailsModel):
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
+        "internal_index_image_copy",
+        "internal_index_image_copy_resolved",
         "removed_operators",
         "organization",
         "omps_operator_version",
@@ -282,6 +290,10 @@ class RmModel(IIBBuildDetailsModel):
             A reference of new index image
         index_image (str)
             A reference of index image to rebuild
+        internal_index_image_copy (str)
+            A reference of IIB's internal copy of the built index image
+        internal_index_image_copy_resolved (str)
+            A reference of resolved IIB's internal copy of the built index image
         removed_operators (list)
             A list of operators to be removed from index image
         organization (str)
@@ -300,6 +312,8 @@ class RmModel(IIBBuildDetailsModel):
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
+        "internal_index_image_copy",
+        "internal_index_image_copy_resolved",
         "organization",
         "removed_operators",
     ]
@@ -315,6 +329,8 @@ class RmModel(IIBBuildDetailsModel):
         "from_index_resolved",
         "index_image",
         "index_image_resolved",
+        "internal_index_image_copy",
+        "internal_index_image_copy_resolved",
         "organization",
         "removed_operators",
     ]
