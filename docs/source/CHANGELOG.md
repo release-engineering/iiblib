@@ -7,12 +7,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 6.0.0 - 2022-06-20
+
+### Added
+ - Added internal_index_image_copy and internal_index_image_copy_resolved attributes support
+
 ## 5.0.0 - 2021-11-09
 
 ### Added
  - Added build_tags attribute support
-
-## 3.0.0 - 2021-03-19
 
 ## 4.0.0 - 2021-07-26
 
