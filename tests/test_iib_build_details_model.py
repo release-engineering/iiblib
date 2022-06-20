@@ -417,10 +417,7 @@ def test_add_model_attributes(fixture_add_build_details_json):
     assert model.from_index == model._data["from_index"]
     assert model.from_index_resolved == model._data["from_index_resolved"]
     assert model.index_image == model._data["index_image"]
-    assert (
-        model.internal_index_image_copy
-        == model._data["internal_index_image_copy"]
-    )
+    assert model.internal_index_image_copy == model._data["internal_index_image_copy"]
     assert (
         model.internal_index_image_copy_resolved
         == model._data["internal_index_image_copy_resolved"]
@@ -442,10 +439,7 @@ def test_rm_model_attributes(fixture_rm_build_details_json):
     assert model.from_index == model._data["from_index"]
     assert model.from_index_resolved == model._data["from_index_resolved"]
     assert model.index_image == model._data["index_image"]
-    assert (
-        model.internal_index_image_copy
-        == model._data["internal_index_image_copy"]
-    )
+    assert model.internal_index_image_copy == model._data["internal_index_image_copy"]
     assert (
         model.internal_index_image_copy_resolved
         == model._data["internal_index_image_copy_resolved"]

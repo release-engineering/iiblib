@@ -291,18 +291,15 @@ def test_iib_client(
             )
             == fixture_add_build_details_json
         )
-        assert (
-            iibc.remove_operators(
-                "index-image",
-                ["operator1"],
-                [],
-                binary_image="binary",
-                build_tags=["v4.5-2020-10-10"],
-                overwrite_from_index=True,
-                overwrite_from_index_token="str",
-            )
-            == RmModel.from_dict(fixture_rm_build_details_json)
-        )
+        assert iibc.remove_operators(
+            "index-image",
+            ["operator1"],
+            [],
+            binary_image="binary",
+            build_tags=["v4.5-2020-10-10"],
+            overwrite_from_index=True,
+            overwrite_from_index_token="str",
+        ) == RmModel.from_dict(fixture_rm_build_details_json)
         assert (
             iibc.remove_operators(
                 "index-image", ["operator1"], [], binary_image="binary", raw=True
@@ -448,19 +445,16 @@ def test_iib_client_deprecation_list(
             "index-image", ["bundles-map"], [], binary_image="binary"
         ) == AddModel.from_dict(fixture_add_build_details_json)
 
-        assert (
-            iibc.add_bundles(
-                "index-image",
-                ["bundles-map"],
-                [],
-                binary_image="binary",
-                cnr_token="cnr",
-                organization="org",
-                overwrite_from_index=True,
-                overwrite_from_index_token="str",
-            )
-            == AddModel.from_dict(fixture_add_build_details_json)
-        )
+        assert iibc.add_bundles(
+            "index-image",
+            ["bundles-map"],
+            [],
+            binary_image="binary",
+            cnr_token="cnr",
+            organization="org",
+            overwrite_from_index=True,
+            overwrite_from_index_token="str",
+        ) == AddModel.from_dict(fixture_add_build_details_json)
 
     with requests_mock.Mocker() as m:
         m.register_uri(
@@ -471,20 +465,17 @@ def test_iib_client_deprecation_list(
         )
         iibc = IIBClient("fake-host")
 
-        assert (
-            iibc.add_bundles(
-                "index-image",
-                ["bundles-map"],
-                [],
-                binary_image="binary",
-                cnr_token="cnr",
-                deprecation_list=["deprecation_list"],
-                organization="org",
-                overwrite_from_index=True,
-                overwrite_from_index_token="str",
-            )
-            == AddModel.from_dict(fixture_deprecation_list_build_details_json)
-        )
+        assert iibc.add_bundles(
+            "index-image",
+            ["bundles-map"],
+            [],
+            binary_image="binary",
+            cnr_token="cnr",
+            deprecation_list=["deprecation_list"],
+            organization="org",
+            overwrite_from_index=True,
+            overwrite_from_index_token="str",
+        ) == AddModel.from_dict(fixture_deprecation_list_build_details_json)
 
 
 def test_client_wait_for_build(fixture_add_build_details_json):
