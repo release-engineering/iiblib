@@ -10,12 +10,23 @@ from .iib_build_details_model import (
 )
 from .iib_authentication import IIBAuth
 from .iib_session import IIBSession
+from tenacity import retry, stop_after_attempt, retry_if_exception_type
 
 
 class IIBException(Exception):
     """General IIB exception"""
 
     pass
+
+
+class IIBRecoverableError(Exception):
+    """IIB exception raised when we want to retry request"""
+
+    pass
+
+
+# number of retries of failed request
+STATE_REASON_RETRY = 1
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
@@ -67,6 +78,7 @@ class IIBClient(object):
 
         Raises:
             IIBException when any error occurs
+            IIBRecoverableError when we want to resent request
         """
         if response.status_code >= 400:
             try:
@@ -82,6 +94,24 @@ class IIBClient(object):
             # does not contain valid json
             response.raise_for_status()
 
+        elif response.status_code == 200:
+            try:
+                resp_state_reason = response.json().get("state_reason", "")
+                # retry only request failed for certain state_reason
+                retry_reasons = [
+                    "The connection failed when updating the request",
+                    "Failed to build the container image on the arch",
+                ]
+                for reason in retry_reasons:
+                    if resp_state_reason.startswith(reason):
+                        raise IIBRecoverableError(resp_state_reason)
+            except ValueError:
+                pass
+
+    @retry(
+        retry=retry_if_exception_type(IIBRecoverableError),
+        stop=stop_after_attempt(STATE_REASON_RETRY),
+    )
     def add_bundles(
         self,
         index_image,
@@ -179,6 +209,10 @@ class IIBClient(object):
             return resp.json()
         return AddModel.from_dict(resp.json())
 
+    @retry(
+        retry=retry_if_exception_type(IIBRecoverableError),
+        stop=stop_after_attempt(STATE_REASON_RETRY),
+    )
     def remove_operators(
         self,
         index_image,
@@ -318,6 +352,10 @@ class IIBClient(object):
                 )
             time.sleep(self.poll_interval)
 
+    @retry(
+        retry=retry_if_exception_type(IIBRecoverableError),
+        stop=stop_after_attempt(STATE_REASON_RETRY),
+    )
     def regenerate_bundle(
         self,
         bundle_image,
@@ -355,6 +393,10 @@ class IIBClient(object):
             return resp.json()
         return RegenerateBundleModel.from_dict(resp.json())
 
+    @retry(
+        retry=retry_if_exception_type(IIBRecoverableError),
+        stop=stop_after_attempt(STATE_REASON_RETRY),
+    )
     def create_empty_index(
         self, index_image, binary_image=None, labels=None, raw=False
     ):
