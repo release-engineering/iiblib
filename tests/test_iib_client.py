@@ -179,7 +179,7 @@ def fixture_regenerate_bundle_build_details_json():
 @pytest.fixture
 def fixture_create_empty_index_build_details_json():
     json = {
-        "id": 3,
+        "id": 4,
         "arches": ["x86_64"],
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
@@ -193,6 +193,28 @@ def fixture_create_empty_index_build_details_json():
         "labels": {"version": "v1"},
         "logs": {},
         "request_type": "create-empty-index",
+        "state": "in_progress",
+        "state_history": [],
+        "state_reason": "state_reason",
+        "updated": "updated",
+        "user": "user@example.com",
+    }
+    return json
+
+
+@pytest.fixture
+def fixture_recursive_related_bundles_build_details_json():
+    json = {
+        "id": 5,
+        "arches": ["x86_64"],
+        "batch": 1,
+        "batch_annotations": {"batch_annotations": 1},
+        "parent_bundle_image": "binary_image",
+        "parent_bundle_image_resolved": "binary_image_resolved",
+        "nested_bundles": {"url": "url", "expiration": "expiration"},
+        "organization": "organization",
+        "logs": {},
+        "request_type": "recursive-related-bundles",
         "state": "in_progress",
         "state_history": [],
         "state_reason": "state_reason",
@@ -243,6 +265,7 @@ def test_iib_client(
     fixture_rm_build_details_json,
     fixture_regenerate_bundle_build_details_json,
     fixture_create_empty_index_build_details_json,
+    fixture_recursive_related_bundles_build_details_json,
     fixture_builds_page1_json,
 ):
     with requests_mock.Mocker() as m:
@@ -297,6 +320,12 @@ def test_iib_client(
             "/api/v1/builds/4",
             status_code=200,
             json=fixture_create_empty_index_build_details_json,
+        )
+        m.register_uri(
+            "GET",
+            "/api/v1/builds/5",
+            status_code=200,
+            json=fixture_recursive_related_bundles_build_details_json,
         )
 
         iibc = IIBClient("fake-host")
@@ -397,6 +426,15 @@ def test_iib_client(
         )
         assert (
             iibc.get_build(4, raw=True) == fixture_create_empty_index_build_details_json
+        )
+
+        # get_builds - request_type is "recursive-related-bundles"
+        assert iibc.get_build(5) == IIBBuildDetailsModel.from_dict(
+            fixture_recursive_related_bundles_build_details_json
+        )
+        assert (
+            iibc.get_build(5, raw=True)
+            == fixture_recursive_related_bundles_build_details_json
         )
 
         assert iibc.get_builds() == IIBBuildDetailsPager.from_dict(
