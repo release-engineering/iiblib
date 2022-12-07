@@ -490,3 +490,38 @@ class CreateEmptyIndexModel(IIBBuildDetailsModel):
     ]
 
     _accepted_request_type = "create-empty-index"
+
+
+class RecursiveRelatedBundlesModel(IIBBuildDetailsModel):
+    """
+    RecursiveRelatedBundles class handling data from "builds/recursive-related-bundles" endpoint,
+    and data from "builds" and "builds/<id>" IIB endpoints defined by
+    "recursive-related-bundles" request_type .
+    RecursiveRelatedBundles class inherits arguments from IIBBuildDetailsModel.
+    For a complete list of arguments check IIBBuildDetailsModel.
+
+    Args:
+        nested_bundles (list)
+            A list of nested bundles
+        organization (str)
+            A name of organization to push to in the legacy app registry
+        parent_bundle_image (str)
+            A reference of parent bundle image
+        parent_bundle_image_resolved (str)
+            A checksum reference of parent bundle image
+    """
+
+    __slots__ = [
+        "nested_bundles",
+        "organization",
+        "parent_bundle_image",
+        "parent_bundle_image_resolved",
+    ]
+    _operation_attrs = [
+        "nested_bundles",
+        "organization",
+        "parent_bundle_image",
+        "parent_bundle_image_resolved",
+    ]
+
+    _accepted_request_type = "recursive-related-bundles"
