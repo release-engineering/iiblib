@@ -196,7 +196,6 @@ def test_from_dict_success(
     fixture_optional_args_missing_json,
     fixture_merge_index_image_build_details_json,
 ):
-
     model1 = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
     assert model1 == AddModel(**fixture_add_build_details_json)
 
@@ -227,7 +226,6 @@ def test_from_dict_failure(
     fixture_bundle_image_missing_json,
     fixture_unknown_request_type_json,
 ):
-
     key_error_msg = "Unsupported request type: unknown"
     type_error_msg = "Class AddModel doesn't accept rm request type"
 
@@ -304,7 +302,6 @@ def test_from_dict_failure(
 
 
 def test_to_dict_rm(fixture_rm_build_details_json):
-
     rm_model = RmModel(
         id=2,
         arches=["x86_64"],
