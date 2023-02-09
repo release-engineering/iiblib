@@ -40,8 +40,6 @@ classifiers = [
     "Intended Audience :: Developers",
     "License :: OSI Approved :: GNU General Public License v3 or later (GPLv3+)",
     "Programming Language :: Python",
-    "Programming Language :: Python :: 2",
-    "Programming Language :: Python :: 2.7",
     "Programming Language :: Python :: 3",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: Implementation :: CPython",
@@ -53,7 +51,7 @@ long_description = read_content("README.md") + read_content(
     os.path.join("docs/source", "CHANGELOG.md")
 )
 
-INSTALL_REQUIRES = ["requests", "requests-kerberos", "six", "kerberos", "tenacity"]
+INSTALL_REQUIRES = ["requests", "requests-kerberos", "kerberos", "tenacity"]
 
 extras_require = {"reST": ["Sphinx"]}
 
@@ -70,6 +68,7 @@ setup(
     author_email="jluza@redhat.com",
     url="https://github.com/release-engineering/iiblib",
     classifiers=classifiers,
+    python_requires=">=3.6",
     packages=["iiblib"],
     data_files=[],
     install_requires=INSTALL_REQUIRES,

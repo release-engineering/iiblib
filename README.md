@@ -9,7 +9,6 @@ Requirements
 ------------
 
 * Python 3.7 over
-* Python 2.7 over
 
 Setup
 -----
