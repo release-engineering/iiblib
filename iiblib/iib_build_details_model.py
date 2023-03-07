@@ -1,3 +1,6 @@
+from copy import deepcopy
+
+
 class IIBBuildDetailsModel(object):
     """
     Model class handling data about index build task
@@ -241,25 +244,7 @@ class AddModel(IIBBuildDetailsModel):
         "removed_operators",
     ]
 
-    _operation_attrs = [
-        "binary_image",
-        "binary_image_resolved",
-        "build_tags",
-        "bundles",
-        "bundle_mapping",
-        "deprecation_list",
-        "distribution_scope",
-        "from_index",
-        "from_index_resolved",
-        "index_image",
-        "index_image_resolved",
-        "internal_index_image_copy",
-        "internal_index_image_copy_resolved",
-        "removed_operators",
-        "organization",
-        "omps_operator_version",
-    ]
-
+    _operation_attrs = deepcopy(__slots__)
     _accepted_request_type = "add"
 
 
@@ -304,23 +289,6 @@ class RmModel(IIBBuildDetailsModel):
         "binary_image",
         "binary_image_resolved",
         "build_tags",
-        "bundles",
-        "bundle_mapping",
-        "deprecation_list",
-        "distribution_scope",
-        "from_index",
-        "from_index_resolved",
-        "index_image",
-        "index_image_resolved",
-        "internal_index_image_copy",
-        "internal_index_image_copy_resolved",
-        "organization",
-        "removed_operators",
-    ]
-    _operation_attrs = [
-        "binary_image",
-        "binary_image_resolved",
-        "build_tags",
         "bundle_mapping",
         "bundles",
         "deprecation_list",
@@ -335,6 +303,7 @@ class RmModel(IIBBuildDetailsModel):
         "removed_operators",
     ]
 
+    _operation_attrs = deepcopy(__slots__)
     _accepted_request_type = "rm"
 
 
@@ -365,12 +334,7 @@ class RegenerateBundleModel(IIBBuildDetailsModel):
         "from_bundle_image_resolved",
         "organization",
     ]
-    _operation_attrs = [
-        "bundle_image",
-        "from_bundle_image",
-        "from_bundle_image_resolved",
-        "organization",
-    ]
+    _operation_attrs = deepcopy(__slots__)
 
     _accepted_request_type = "regenerate-bundle"
 
@@ -421,19 +385,8 @@ class MergeIndexImageModel(IIBBuildDetailsModel):
         "target_index",
         "target_index_resolved",
     ]
-    _operation_attrs = [
-        "binary_image",
-        "binary_image_resolved",
-        "build_tags",
-        "deprecation_list",
-        "distribution_scope",
-        "index_image",
-        "source_from_index",
-        "source_from_index_resolved",
-        "target_index",
-        "target_index_resolved",
-    ]
 
+    _operation_attrs = deepcopy(__slots__)
     _accepted_request_type = "merge-index-image"
 
 
@@ -478,17 +431,8 @@ class CreateEmptyIndexModel(IIBBuildDetailsModel):
         "index_image_resolved",
         "labels",
     ]
-    _operation_attrs = [
-        "binary_image",
-        "binary_image_resolved",
-        "distribution_scope",
-        "from_index",
-        "from_index_resolved",
-        "index_image",
-        "index_image_resolved",
-        "labels",
-    ]
 
+    _operation_attrs = deepcopy(__slots__)
     _accepted_request_type = "create-empty-index"
 
 
@@ -517,11 +461,58 @@ class RecursiveRelatedBundlesModel(IIBBuildDetailsModel):
         "parent_bundle_image",
         "parent_bundle_image_resolved",
     ]
-    _operation_attrs = [
-        "nested_bundles",
-        "organization",
-        "parent_bundle_image",
-        "parent_bundle_image_resolved",
+
+    _operation_attrs = deepcopy(__slots__)
+    _accepted_request_type = "recursive-related-bundles"
+
+
+class FBCOperationsModel(IIBBuildDetailsModel):
+    """
+    FBCOperationModel class handling data from "builds/fbc-operations" endpoint,
+    and data from "builds" and "builds/<id>" IIB endpoints defined by
+    "fbc-operations" request_type .
+    FBCOperationModel class inherits arguments from IIBBuildDetailsModel.
+    For a complete list of arguments check IIBBuildDetailsModel.
+
+    Args:
+        binary_image (str)
+            A reference of binary image used for rebuilding
+        binary_image_resolved (str)
+            A checksum reference of binary image that was used for rebuilding
+        distribution_scope (str)
+            A distribution where is the product used (prod, stage, etc.)
+        fbc_fragment (str)
+            A reference to fbc fragment.
+        fbc_fragment_resolved (str)
+            A checksum reference of fbc fragment that was used for rebuilding
+        from_index (str)
+            A reference of index image used as source for rebuild
+        from_index_resolved (str)
+            A checksum reference of index image that was used for rebuilding
+        index_image (str)
+            A reference of index image to rebuild
+        index_image_resolved (str)
+            A reference of resolved index image copy of the index image
+        internal_index_image_copy (str)
+            A reference of IIB's internal copy of the built index image
+        internal_index_image_copy_resolved (str)
+            A reference of resolved IIB's internal copy of the built index image
+    """
+
+    __slots__ = [
+        "binary_image",
+        "binary_image_resolved",
+        "build_tags",
+        "distribution_scope",
+        "fbc_fragment",
+        "fbc_fragment_resolved",
+        "from_index",
+        "from_index_resolved",
+        "index_image",
+        "index_image_resolved",
+        "internal_index_image_copy",
+        "internal_index_image_copy_resolved",
     ]
 
-    _accepted_request_type = "recursive-related-bundles"
+    _operation_attrs = deepcopy(__slots__)
+    _accepted_request_type = "fbc-operations"
