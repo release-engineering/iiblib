@@ -225,6 +225,36 @@ def fixture_recursive_related_bundles_build_details_json():
 
 
 @pytest.fixture
+def fixture_fbc_operations_build_details_json():
+    json = {
+        "id": 6,
+        "arches": ["x86_64"],
+        "state": "in_progress",
+        "state_reason": "state_reason",
+        "request_type": "fbc-operations",
+        "state_history": [],
+        "batch": 1,
+        "batch_annotations": {"batch_annotations": 1},
+        "build_tags": ["v4.5-2020-10-10"],
+        "logs": {},
+        "updated": "updated",
+        "user": "user@example.com",
+        "binary_image": "binary_image",
+        "binary_image_resolved": "binary_image_resolved",
+        "distribution_scope": "null",
+        "fbc_fragment": "fbc_fragment",
+        "fbc_fragment_resolved": "fbc_fragment_resolved",
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "index_image": "index_image",
+        "index_image_resolved": "index_image_resolved",
+        "internal_index_image_copy": "internal_index_image_copy",
+        "internal_index_image_copy_resolved": "index_image_copy_resolved",
+    }
+    return json
+
+
+@pytest.fixture
 def fixture_builds_page1_json(fixture_add_build_details_json):
     json = {
         "items": [fixture_add_build_details_json],
@@ -262,11 +292,12 @@ def fixture_builds_page2_json(fixture_rm_build_details_json):
 
 def test_iib_client(
     fixture_add_build_details_json,
-    fixture_rm_build_details_json,
-    fixture_regenerate_bundle_build_details_json,
-    fixture_create_empty_index_build_details_json,
-    fixture_recursive_related_bundles_build_details_json,
     fixture_builds_page1_json,
+    fixture_create_empty_index_build_details_json,
+    fixture_fbc_operations_build_details_json,
+    fixture_recursive_related_bundles_build_details_json,
+    fixture_regenerate_bundle_build_details_json,
+    fixture_rm_build_details_json,
 ):
     with requests_mock.Mocker() as m:
         m.register_uri(
@@ -326,6 +357,12 @@ def test_iib_client(
             "/api/v1/builds/5",
             status_code=200,
             json=fixture_recursive_related_bundles_build_details_json,
+        )
+        m.register_uri(
+            "GET",
+            "/api/v1/builds/6",
+            status_code=200,
+            json=fixture_fbc_operations_build_details_json,
         )
 
         iibc = IIBClient("fake-host")
@@ -436,6 +473,12 @@ def test_iib_client(
             iibc.get_build(5, raw=True)
             == fixture_recursive_related_bundles_build_details_json
         )
+
+        # get_builds - request_type is "fbc-operations"
+        assert iibc.get_build(6) == IIBBuildDetailsModel.from_dict(
+            fixture_fbc_operations_build_details_json
+        )
+        assert iibc.get_build(6, raw=True) == fixture_fbc_operations_build_details_json
 
         assert iibc.get_builds() == IIBBuildDetailsPager.from_dict(
             iibc, fixture_builds_page1_json
