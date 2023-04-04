@@ -103,7 +103,6 @@ class IIBKrbAuth(IIBAuth):
 
         return auth_header
 
-
     def make_auth(self, iib_session):
         """Setup IIBSession with kerberos authentication"""
         iib_session.session.headers["Authorization"] = self._krb_auth_header()
