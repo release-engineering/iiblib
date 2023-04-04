@@ -2,6 +2,7 @@ import os
 import kerberos
 import subprocess
 import tempfile
+from retry import retry
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
@@ -57,6 +58,7 @@ class IIBKrbAuth(IIBAuth):
         self.ktfile = ktfile
         self.service = service
 
+    @retry(kerberos.KrbError, tryies=3, delay=10, backoff=5)
     def _krb_auth_header(self):
         retcode = subprocess.Popen(
             ["klist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
@@ -100,6 +102,7 @@ class IIBKrbAuth(IIBAuth):
                 os.unlink(krb5ccname)
 
         return auth_header
+
 
     def make_auth(self, iib_session):
         """Setup IIBSession with kerberos authentication"""
