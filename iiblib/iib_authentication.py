@@ -58,7 +58,7 @@ class IIBKrbAuth(IIBAuth):
         self.ktfile = ktfile
         self.service = service
 
-    @retry(kerberos.KrbError, tryies=3, delay=10, backoff=5)
+    @retry(kerberos.KrbError, tries=3, delay=10, backoff=5)
     def _krb_auth_header(self):
         retcode = subprocess.Popen(
             ["klist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
