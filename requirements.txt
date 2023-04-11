@@ -3,4 +3,3 @@ requests-kerberos
 six
 kerberos
 tenacity
-retry
