@@ -2,6 +2,12 @@ import os
 import kerberos
 import subprocess
 import tempfile
+from tenacity import (
+    retry,
+    stop_after_attempt,
+    retry_if_exception_type,
+    wait_exponential,
+)
 
 
 # pylint: disable=bad-option-value,useless-object-inheritance
@@ -57,6 +63,11 @@ class IIBKrbAuth(IIBAuth):
         self.ktfile = ktfile
         self.service = service
 
+    @retry(
+        retry=retry_if_exception_type(kerberos.KrbError),
+        wait=wait_exponential(multiplier=10, exp_base=5),
+        stop=stop_after_attempt(3),
+    )
     def _krb_auth_header(self):
         retcode = subprocess.Popen(
             ["klist"], stdout=subprocess.PIPE, stderr=subprocess.PIPE
