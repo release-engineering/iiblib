@@ -287,7 +287,7 @@ class IIBClient(object):
             return resp.json()
         return RmModel.from_dict(resp.json())
 
-    def get_builds(self, page=1, raw=False):
+    def get_builds(self, page=1, raw=False, per_page=20, **filters):
         """Get all historical builds of index image.
 
         Args:
@@ -295,6 +295,21 @@ class IIBClient(object):
                 Offset page to start listing results
             raw (bool)
                 Return raw json response instead of model instance
+            per_page (int)
+                Amount of items to display per page
+            filters (dict)
+                Keyword arguments to filter the results.
+                Valid keys are:
+                    request_type (str)
+                        Filter builds by request type
+                    state (str)
+                        Filter builds by state
+                    user (str)
+                        Filter builds by user
+                    index_image (str)
+                        Filter builds by index_image
+                    batch (int)
+                        The batch to filter the build requests by
 
         Returns:
             IIBBuildDetailsPager or dict
@@ -302,7 +317,13 @@ class IIBClient(object):
               return IIBBuildDetailsPager instance.
         """
 
-        resp = self.iib_session.get("builds", params={"page": page})
+        params = {"page": page, "per_page": per_page}
+        valid_filters = ["state", "request_type", "user", "index_image", "batch"]
+        for f in filters:
+            if f in valid_filters:
+                params.update({f: filters.get(f)})
+
+        resp = self.iib_session.get("builds", params=params)
         self._check_response(resp)
 
         if raw:
