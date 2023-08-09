@@ -120,6 +120,7 @@ class IIBClient(object):
         binary_image=None,
         build_tags=None,
         cnr_token=None,
+        check_related_images=None,
         deprecation_list=None,
         organization=None,
         overwrite_from_index=False,
@@ -142,6 +143,8 @@ class IIBClient(object):
                 optional. Image with binary used to rebuild existing index image
             cnr_token (srt)
                 optional. CNR token.
+            check_related_images (bool)
+                optional. Flag to indicate if related_images of a bundle should be inspected
             deprecation_list (list)
                 optional. A list of bundles to be deprecated from the new index image
             organization (str)
@@ -180,6 +183,9 @@ class IIBClient(object):
 
         if cnr_token:
             post_data["cnr_token"] = cnr_token
+
+        if check_related_images:
+            post_data["check_related_images"] = check_related_images
 
         if organization:
             post_data["organization"] = organization
