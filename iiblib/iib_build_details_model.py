@@ -203,6 +203,8 @@ class AddModel(IIBBuildDetailsModel):
             A list of bundles to be added to index image
         bundle_mapping (dict)
             Operator names in "bundles" map to: list of "bundles" which map to the operator key
+        check_related_images (bool)
+            Flag to indicate if related_images of a bundle should be inspected
         deprecation_list (list)
             A list of bundles to be deprecated from the new index image
         distribution_scope (str)
@@ -231,6 +233,7 @@ class AddModel(IIBBuildDetailsModel):
         "build_tags",
         "bundle_mapping",
         "bundles",
+        "check_related_images",
         "deprecation_list",
         "distribution_scope",
         "from_index",

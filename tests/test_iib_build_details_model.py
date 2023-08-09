@@ -21,6 +21,7 @@ def fixture_add_build_details_json():
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
         "build_tags": ["v4.5-2020-10-10"],
+        "check_related_images": True,
         "logs": {},
         "deprecation_list": [],
         "updated": "updated",
@@ -238,6 +239,7 @@ def test_from_dict_failure(
         state_history=[],
         batch=1,
         batch_annotations={"batch_annotations": 1},
+        check_related_images=True,
         logs={},
         deprecation_list=[],
         updated="updated",
@@ -268,6 +270,7 @@ def test_from_dict_failure(
         "state_history": [],
         "batch": 1,
         "batch_annotations": {"batch_annotations": 1},
+        "check_related_images": True,
         "logs": {},
         "deprecation_list": [],
         "updated": "updated",
@@ -411,6 +414,7 @@ def test_add_model_attributes(fixture_add_build_details_json):
     assert model.binary_image_resolved == model._data["binary_image_resolved"]
     assert model.bundles == model._data["bundles"]
     assert model.bundle_mapping == model._data["bundle_mapping"]
+    assert model.check_related_images == model._data["check_related_images"]
     assert model.from_index == model._data["from_index"]
     assert model.from_index_resolved == model._data["from_index_resolved"]
     assert model.index_image == model._data["index_image"]
