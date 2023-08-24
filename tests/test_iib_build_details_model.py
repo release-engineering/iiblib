@@ -10,22 +10,38 @@ from iiblib.iib_build_details_model import (
 
 
 @fixture
-def fixture_add_build_details_json():
+def fixture_base_build_details_json():
     json = {
-        "id": 1,
         "arches": ["x86_64"],
         "state": "in_progress",
         "state_reason": "state_reason",
-        "request_type": "add",
-        "state_history": [],
         "batch": 1,
-        "batch_annotations": {"batch_annotations": 1},
-        "build_tags": ["v4.5-2020-10-10"],
-        "check_related_images": True,
-        "logs": {},
-        "deprecation_list": [],
         "updated": "updated",
         "user": "user@example.com",
+    }
+    return json
+
+
+@fixture
+def fixture_full_base_build_details_json(fixture_base_build_details_json):
+    json = {
+        "state_history": [],
+        "batch_annotations": {"batch_annotations": 1},
+        "logs": {},
+        "organization": "organization",
+    }
+    json.update(fixture_base_build_details_json)
+    return json
+
+
+@fixture
+def fixture_add_build_details_json(fixture_full_base_build_details_json):
+    json = {
+        "id": 1,
+        "request_type": "add",
+        "build_tags": ["v4.5-2020-10-10"],
+        "check_related_images": True,
+        "deprecation_list": [],
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
         "bundles": ["bundles1"],
@@ -37,29 +53,27 @@ def fixture_add_build_details_json():
         "internal_index_image_copy": "internal_index_image_copy",
         "internal_index_image_copy_resolved": "index_image_copy_resolved",
         "removed_operators": ["operator1"],
-        "organization": "organization",
         "omps_operator_version": {"operator": "1.0"},
         "distribution_scope": "null",
     }
+    json.update(fixture_full_base_build_details_json)
     return json
 
 
 @fixture
-def fixture_rm_build_details_json():
+def fixture_add_build_details_json2(fixture_add_build_details_json):
+    json = fixture_add_build_details_json
+    json["check_related_images"] = None
+    return json
+
+
+@fixture
+def fixture_rm_build_details_json(fixture_full_base_build_details_json):
     json = {
         "id": 2,
-        "arches": ["x86_64"],
-        "state": "in_progress",
-        "state_reason": "state_reason",
         "request_type": "rm",
-        "state_history": [],
-        "batch": 1,
-        "batch_annotations": {"batch_annotations": 1},
         "build_tags": ["v4.5-2020-10-10"],
-        "logs": {},
         "deprecation_list": [],
-        "updated": "updated",
-        "user": "user@example.com",
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
         "bundles": ["bundles1"],
@@ -71,49 +85,31 @@ def fixture_rm_build_details_json():
         "internal_index_image_copy": "internal_index_image_copy",
         "internal_index_image_copy_resolved": "index_image_copy_resolved",
         "removed_operators": ["operator1"],
-        "organization": "organization",
         "distribution_scope": "null",
     }
+    json.update(fixture_full_base_build_details_json)
     return json
 
 
 @fixture
-def fixture_regenerate_bundle_build_details_json():
+def fixture_regenerate_bundle_build_details_json(fixture_full_base_build_details_json):
     json = {
         "id": 3,
-        "arches": ["x86_64"],
-        "state": "in_progress",
-        "state_reason": "state_reason",
         "request_type": "regenerate-bundle",
-        "state_history": [],
-        "batch": 1,
-        "batch_annotations": {"batch_annotations": 1},
-        "logs": {},
-        "updated": "updated",
-        "user": "user@example.com",
         "bundle_image": "bundle_image",
         "from_bundle_image": "from_bundle_image",
         "from_bundle_image_resolved": "from_bundle_image_resolved",
-        "organization": "organization",
     }
+    json.update(fixture_full_base_build_details_json)
     return json
 
 
 @fixture
-def fixture_merge_index_image_build_details_json():
+def fixture_merge_index_image_build_details_json(fixture_full_base_build_details_json):
     json = {
         "id": 4,
-        "arches": ["x86_64"],
-        "state": "in_progress",
-        "state_reason": "state_reason",
         "request_type": "merge-index-image",
-        "state_history": [],
-        "batch": 1,
-        "batch_annotations": {"batch_annotations": 1},
         "build_tags": ["v4.5-2020-10-10"],
-        "logs": {},
-        "updated": "updated",
-        "user": "user@example.com",
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
         "deprecation_list": [],
@@ -124,74 +120,53 @@ def fixture_merge_index_image_build_details_json():
         "target_index": "target_index",
         "target_index_resolved": "target_index_resolved",
     }
+    json.update(fixture_full_base_build_details_json)
     return json
 
 
 @fixture
-def fixture_unknown_request_type_json():
+def fixture_unknown_request_type_json(fixture_full_base_build_details_json):
     json = {
         "id": 3,
-        "arches": ["x86_64"],
-        "state": "in_progress",
-        "state_reason": "state_reason",
         "request_type": "unknown",
-        "state_history": [],
-        "batch": 1,
-        "batch_annotations": {"batch_annotations": 1},
-        "logs": {},
-        "updated": "updated",
-        "user": "user@example.com",
         "bundle_image": "bundle_image",
         "from_bundle_image": "from_bundle_image",
         "from_bundle_image_resolved": "from_bundle_image_resolved",
-        "organization": "organization",
     }
+    json.update(fixture_full_base_build_details_json)
     return json
 
 
 @fixture
-def fixture_bundle_image_missing_json():
+def fixture_bundle_image_missing_json(fixture_full_base_build_details_json):
     json = {
         "id": 3,
-        "arches": ["x86_64"],
-        "state": "in_progress",
-        "state_reason": "state_reason",
         "request_type": "regenerate-bundle",
-        "state_history": [],
-        "batch": 1,
-        "batch_annotations": {"batch_annotations": 1},
-        "logs": {},
         "deprecation_list": [],
-        "updated": "updated",
-        "user": "user@example.com",
         "from_bundle_image": "from_bundle_image",
         "from_bundle_image_resolved": "from_bundle_image_resolved",
-        "organization": "organization",
     }
+    json.update(fixture_full_base_build_details_json)
     return json
 
 
 @fixture
-def fixture_optional_args_missing_json():
+def fixture_optional_args_missing_json(fixture_base_build_details_json):
     json = {
         "id": 3,
-        "arches": ["x86_64"],
-        "state": "in_progress",
-        "state_reason": "state_reason",
         "request_type": "regenerate-bundle",
-        "batch": 1,
-        "updated": "updated",
-        "user": "user@example.com",
         "bundle_image": "bundle_image",
         "from_bundle_image": "from_bundle_image",
         "from_bundle_image_resolved": "from_bundle_image_resolved",
         "organization": "organization",
     }
+    json.update(fixture_base_build_details_json)
     return json
 
 
 def test_from_dict_success(
     fixture_add_build_details_json,
+    fixture_add_build_details_json2,
     fixture_rm_build_details_json,
     fixture_regenerate_bundle_build_details_json,
     fixture_optional_args_missing_json,
@@ -200,23 +175,26 @@ def test_from_dict_success(
     model1 = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json)
     assert model1 == AddModel(**fixture_add_build_details_json)
 
-    model2 = IIBBuildDetailsModel.from_dict(fixture_rm_build_details_json)
-    assert model2 == RmModel(**fixture_rm_build_details_json)
+    model2 = IIBBuildDetailsModel.from_dict(fixture_add_build_details_json2)
+    assert model2 == AddModel(**fixture_add_build_details_json2)
 
-    model3 = IIBBuildDetailsModel.from_dict(
+    model3 = IIBBuildDetailsModel.from_dict(fixture_rm_build_details_json)
+    assert model3 == RmModel(**fixture_rm_build_details_json)
+
+    model4 = IIBBuildDetailsModel.from_dict(
         fixture_regenerate_bundle_build_details_json
     )
-    assert model3 == RegenerateBundleModel(
+    assert model4 == RegenerateBundleModel(
         **fixture_regenerate_bundle_build_details_json
     )
 
-    model4 = IIBBuildDetailsModel.from_dict(fixture_optional_args_missing_json)
-    assert model4 == RegenerateBundleModel(**fixture_optional_args_missing_json)
+    model5 = IIBBuildDetailsModel.from_dict(fixture_optional_args_missing_json)
+    assert model5 == RegenerateBundleModel(**fixture_optional_args_missing_json)
 
-    model5 = IIBBuildDetailsModel.from_dict(
+    model6 = IIBBuildDetailsModel.from_dict(
         fixture_merge_index_image_build_details_json
     )
-    assert model5 == MergeIndexImageModel(
+    assert model6 == MergeIndexImageModel(
         **fixture_merge_index_image_build_details_json
     )
 
