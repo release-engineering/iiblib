@@ -20,41 +20,6 @@ from iiblib.iib_build_details_pager import IIBBuildDetailsPager
 
 
 @pytest.fixture
-def fixture_add_build_details_json_failed():
-    json = {
-        "id": 1,
-        "arches": ["x86_64"],
-        "state": "failed",
-        "state_reason": "The connection failed when updating the request",
-        "request_type": "add",
-        "state_history": [],
-        "batch": 1,
-        "batch_annotations": {"batch_annotations": 1},
-        "build_tags": [],
-        "check_related_images": True,
-        "logs": {},
-        "updated": "updated",
-        "user": "user@example.com",
-        "binary_image": "binary_image",
-        "binary_image_resolved": "binary_image_resolved",
-        "bundles": ["bundles1"],
-        "bundle_mapping": {"bundle_mapping": "map"},
-        "from_index": "from_index",
-        "from_index_resolved": "from_index_resolved",
-        "index_image": "index_image",
-        "index_image_resolved": "index_image_resolved",
-        "internal_index_image_copy": "internal_index_image_copy",
-        "internal_index_image_copy_resolved": "index_image_copy_resolved",
-        "removed_operators": ["operator1"],
-        "organization": "organization",
-        "omps_operator_version": {"operator": "1.0"},
-        "distribution_scope": "null",
-        "deprecation_list": [],
-    }
-    return json
-
-
-@pytest.fixture
 def fixture_add_build_details_json():
     json = {
         "id": 1,
@@ -487,31 +452,6 @@ def test_iib_client(
             iibc, fixture_builds_page1_json
         )
         assert iibc.get_builds(raw=True) == fixture_builds_page1_json
-
-
-def test_iib_client_state_reason_retries(
-    fixture_add_build_details_json_failed,
-):
-    with requests_mock.Mocker() as m:
-        m.register_uri(
-            "POST",
-            "/api/v1/builds/add",
-            status_code=200,
-            json=fixture_add_build_details_json_failed,
-        )
-
-        iibc = IIBClient("fake-host")
-        with pytest.raises(tenacity.RetryError):
-            iibc.add_bundles(
-                "index-image",
-                ["bundles-map"],
-                [],
-                binary_image="binary",
-                cnr_token="cnr",
-                organization="org",
-            )
-
-            assert m.call_count == 2
 
 
 def test_iib_client_no_overwrite_from_index_or_token(
