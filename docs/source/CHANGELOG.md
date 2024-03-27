@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## 7.3.0 - 2024-03-27
+
+### Removed
+ - Removed retries based on specific state_reason
+
 ## 7.2.0 - 2023-09-12
 
 ### Added
