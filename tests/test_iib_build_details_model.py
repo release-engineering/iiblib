@@ -1,6 +1,7 @@
 from pytest import fixture, raises, mark
 
 from iiblib.iib_build_details_model import (
+    AddDeprecationsModel,
     IIBBuildDetailsModel,
     AddModel,
     RmModel,
@@ -159,6 +160,26 @@ def fixture_optional_args_missing_json(fixture_base_build_details_json):
         "from_bundle_image": "from_bundle_image",
         "from_bundle_image_resolved": "from_bundle_image_resolved",
         "organization": "organization",
+    }
+    json.update(fixture_base_build_details_json)
+    return json
+
+
+@fixture
+def fixture_add_deprecations_build_details_json(fixture_base_build_details_json):
+    json = {
+        "id": 1,
+        "request_type": "add-deprecations",
+        "deprecation_schema": "link/to/deprecation/schema",
+        "binary_image": "binary_image",
+        "binary_image_resolved": "binary_image_resolved",
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "index_image": "index_image",
+        "index_image_resolved": "index_image_resolved",
+        "internal_index_image_copy": "internal_index_image_copy",
+        "internal_index_image_copy_resolved": "index_image_copy_resolved",
+        "operator_package": "my_package",
     }
     json.update(fixture_base_build_details_json)
     return json
@@ -456,3 +477,20 @@ def test_merge_index_image_model_attributes(
     assert model.source_from_index_resolved == model._data["source_from_index_resolved"]
     assert model.target_index == model._data["target_index"]
     assert model.target_index_resolved == model._data["target_index_resolved"]
+
+
+def test_add_deprecations_model_attributes(fixture_add_deprecations_build_details_json):
+    model = AddDeprecationsModel.from_dict(fixture_add_deprecations_build_details_json)
+
+    assert model.binary_image == model._data["binary_image"]
+    assert model.binary_image_resolved == model._data["binary_image_resolved"]
+    assert model.deprecation_schema == model._data["deprecation_schema"]
+    assert model.from_index == model._data["from_index"]
+    assert model.from_index_resolved == model._data["from_index_resolved"]
+    assert model.index_image == model._data["index_image"]
+    assert model.internal_index_image_copy == model._data["internal_index_image_copy"]
+    assert (
+        model.internal_index_image_copy_resolved
+        == model._data["internal_index_image_copy_resolved"]
+    )
+    assert model.operator_package == model._data["operator_package"]

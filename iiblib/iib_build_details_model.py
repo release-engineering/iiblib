@@ -519,3 +519,52 @@ class FBCOperationsModel(IIBBuildDetailsModel):
 
     _operation_attrs = deepcopy(__slots__)
     _accepted_request_type = "fbc-operations"
+
+
+class AddDeprecationsModel(IIBBuildDetailsModel):
+    """
+    AddDeprecationsModel class handling data from "builds/add-deprecations"
+    endpoint, and data from "builds" and "builds/<id>"
+    IIB endpoints defined by "add-deprecations" request_type.
+    AddDeprecationsModel class inherits arguments and behaviours
+    from IIBBuildDetailsModel.
+    For a complete list of arguments check IIBBuildDetailsModel.
+
+    Args:
+        binary_image (str)
+            A reference of binary image used for rebuilding
+        binary_image_resolved (str)
+            A checksum reference of binary image that was used for rebuilding
+        deprecation_schema (str)
+            A link to another endpoint that provides the deprecation schema for the request
+        from_index (str)
+            A reference of index image used as source for rebuild
+        from_index_resolved (str)
+            A reference of new index image
+        index_image (str)
+            A reference of index image to rebuild
+        index_image_resolved (str)
+            A reference of resolved index image copy of the index image
+        internal_index_image_copy (str)
+            A reference of IIB's internal copy of the built index image
+        internal_index_image_copy_resolved (str)
+            A reference of resolved IIB's internal copy of the built index image
+        operator_package (str)
+            A name of operator package for which the deprecation schema was provided
+    """
+
+    __slots__ = [
+        "binary_image",
+        "binary_image_resolved",
+        "deprecation_schema",
+        "from_index",
+        "from_index_resolved",
+        "index_image",
+        "index_image_resolved",
+        "internal_index_image_copy",
+        "internal_index_image_copy_resolved",
+        "operator_package",
+    ]
+
+    _operation_attrs = deepcopy(__slots__)
+    _accepted_request_type = "add-deprecations"
