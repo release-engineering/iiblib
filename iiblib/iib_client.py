@@ -7,6 +7,7 @@ from .iib_build_details_model import (
     AddModel,
     RegenerateBundleModel,
     CreateEmptyIndexModel,
+    AddDeprecationsModel,
 )
 from .iib_authentication import IIBAuth
 from .iib_session import IIBSession
@@ -404,3 +405,72 @@ class IIBClient(object):
 
     def health(self):
         raise NotImplementedError
+
+    def add_deprecations(
+        self,
+        index_image=None,
+        deprecation_schema=None,
+        operator_package=None,
+        binary_image=None,
+        overwrite_from_index=False,
+        overwrite_from_index_token=None,
+        raw=False,
+    ):
+        """Add deprecations of an operator package to index image.
+
+        Args:
+            index_image (str)
+                Index image ref used as source to rebuild
+            deprecation_schema (str)
+                Link of deprecation schema
+            operator_package (str)
+                Operator package to add deprecations to
+            binary_image (str)
+                optional. Image with binary used to rebuild existing index image
+            overwrite_from_index (bool)
+                optional. Indicates if resulting index_image needs to be
+                overwritten at the location of from_index. If this is provided,
+                overwrite_from_index_token needs to be specified too.
+            overwrite_from_index_token (str)
+                optional. Token of the destination registry repo where the
+                resulting index image built by IIB has to be overwritten. If
+                this is provided, overwrite_from_index must be set to True.
+            raw (bool)
+               Return raw json response instead of model instance
+
+        Returns:
+            AddDeprecationsModel or dict
+              if raw == True return dict with json response otherwise
+              return AddDeprecationsModel instance.
+        """
+
+        post_data = {
+            "from_index": index_image,
+            "operator_package": operator_package,
+            "deprecation_schema": deprecation_schema,
+        }
+
+        if binary_image:
+            post_data["binary_image"] = binary_image
+
+        if overwrite_from_index:
+            if overwrite_from_index_token:
+                post_data["overwrite_from_index"] = overwrite_from_index
+                post_data["overwrite_from_index_token"] = overwrite_from_index_token
+            else:
+                raise ValueError(
+                    "Either both or neither of overwrite-from-index and "
+                    "overwrite-from-index-token should be specified."
+                )
+        elif overwrite_from_index_token:
+            raise ValueError(
+                "Either both or neither of overwrite-from-index and "
+                "overwrite-from-index-token should be specified."
+            )
+
+        resp = self.iib_session.post("builds/add-deprecations", json=post_data)
+        self._check_response(resp)
+
+        if raw:
+            return resp.json()
+        return AddDeprecationsModel.from_dict(resp.json())

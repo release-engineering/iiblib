@@ -15,6 +15,7 @@ from iiblib.iib_build_details_model import (
     RmModel,
     RegenerateBundleModel,
     CreateEmptyIndexModel,
+    AddDeprecationsModel,
 )
 from iiblib.iib_build_details_pager import IIBBuildDetailsPager
 
@@ -258,6 +259,34 @@ def fixture_builds_page2_json(fixture_rm_build_details_json):
     return json
 
 
+@pytest.fixture
+def fixture_add_deprecations_build_details_json():
+    json = {
+        "id": 7,
+        "arches": ["x86_64"],
+        "state": "in_progress",
+        "state_reason": "state_reason",
+        "request_type": "add-deprecations",
+        "state_history": [],
+        "batch": 1,
+        "batch_annotations": {"batch_annotations": 1},
+        "logs": {},
+        "updated": "updated",
+        "user": "user@example.com",
+        "deprecation_schema": "link/to/deprecation/schema",
+        "binary_image": "binary_image",
+        "binary_image_resolved": "binary_image_resolved",
+        "from_index": "from_index",
+        "from_index_resolved": "from_index_resolved",
+        "index_image": "index_image",
+        "index_image_resolved": "index_image_resolved",
+        "internal_index_image_copy": "internal_index_image_copy",
+        "internal_index_image_copy_resolved": "index_image_copy_resolved",
+        "operator_package": "my_package",
+    }
+    return json
+
+
 def test_iib_client(
     fixture_add_build_details_json,
     fixture_builds_page1_json,
@@ -266,6 +295,7 @@ def test_iib_client(
     fixture_recursive_related_bundles_build_details_json,
     fixture_regenerate_bundle_build_details_json,
     fixture_rm_build_details_json,
+    fixture_add_deprecations_build_details_json,
 ):
     with requests_mock.Mocker() as m:
         m.register_uri(
@@ -331,6 +361,12 @@ def test_iib_client(
             "/api/v1/builds/6",
             status_code=200,
             json=fixture_fbc_operations_build_details_json,
+        )
+        m.register_uri(
+            "POST",
+            "/api/v1/builds/add-deprecations",
+            status_code=200,
+            json=fixture_add_deprecations_build_details_json,
         )
 
         iibc = IIBClient("fake-host")
@@ -452,6 +488,24 @@ def test_iib_client(
             iibc, fixture_builds_page1_json
         )
         assert iibc.get_builds(raw=True) == fixture_builds_page1_json
+
+        assert iibc.add_deprecations(
+            "index-image",
+            deprecation_schema="link/to/deprecation/schema",
+            operator_package="my_package",
+            binary_image="binary",
+            overwrite_from_index=True,
+            overwrite_from_index_token="str",
+        ) == AddDeprecationsModel.from_dict(fixture_add_deprecations_build_details_json)
+        assert (
+            iibc.add_deprecations(
+                "index-image",
+                deprecation_schema="link/to/deprecation/schema",
+                operator_package="my_package",
+                raw=True,
+            )
+            == fixture_add_deprecations_build_details_json
+        )
 
 
 def test_iib_client_no_overwrite_from_index_or_token(
