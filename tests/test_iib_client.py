@@ -273,6 +273,7 @@ def fixture_add_deprecations_build_details_json():
         "logs": {},
         "updated": "updated",
         "user": "user@example.com",
+        "build_tags": ["extra-tag1"],
         "deprecation_schema": "link/to/deprecation/schema",
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
@@ -494,6 +495,7 @@ def test_iib_client(
             deprecation_schema="link/to/deprecation/schema",
             operator_package="my_package",
             binary_image="binary",
+            build_tags=["extra-tag1"],
             overwrite_from_index=True,
             overwrite_from_index_token="str",
         ) == AddDeprecationsModel.from_dict(fixture_add_deprecations_build_details_json)

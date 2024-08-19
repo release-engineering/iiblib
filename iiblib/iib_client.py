@@ -412,6 +412,7 @@ class IIBClient(object):
         deprecation_schema=None,
         operator_package=None,
         binary_image=None,
+        build_tags=None,
         overwrite_from_index=False,
         overwrite_from_index_token=None,
         raw=False,
@@ -427,6 +428,8 @@ class IIBClient(object):
                 Operator package to add deprecations to
             binary_image (str)
                 optional. Image with binary used to rebuild existing index image
+            build_tags (list)
+                optional. List of extra tags applied to built index image in temp namespace
             overwrite_from_index (bool)
                 optional. Indicates if resulting index_image needs to be
                 overwritten at the location of from_index. If this is provided,
@@ -452,6 +455,9 @@ class IIBClient(object):
 
         if binary_image:
             post_data["binary_image"] = binary_image
+
+        if build_tags:
+            post_data["build_tags"] = build_tags
 
         if overwrite_from_index:
             if overwrite_from_index_token:

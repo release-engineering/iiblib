@@ -171,6 +171,7 @@ def fixture_add_deprecations_build_details_json(fixture_base_build_details_json)
         "id": 1,
         "request_type": "add-deprecations",
         "deprecation_schema": "link/to/deprecation/schema",
+        "build_tags": [],
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
         "from_index": "from_index",

@@ -556,6 +556,7 @@ class AddDeprecationsModel(IIBBuildDetailsModel):
     __slots__ = [
         "binary_image",
         "binary_image_resolved",
+        "build_tags",
         "deprecation_schema",
         "from_index",
         "from_index_resolved",
