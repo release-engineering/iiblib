@@ -274,7 +274,7 @@ def fixture_add_deprecations_build_details_json():
         "updated": "updated",
         "user": "user@example.com",
         "build_tags": ["extra-tag1"],
-        "deprecation_schema": "link/to/deprecation/schema",
+        "deprecation_schema_url": "link/to/deprecation/schema",
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
         "from_index": "from_index",
@@ -492,7 +492,7 @@ def test_iib_client(
 
         assert iibc.add_deprecations(
             "index-image",
-            deprecation_schema="link/to/deprecation/schema",
+            deprecation_schema='{"a": "b"}',
             operator_package="my_package",
             binary_image="binary",
             build_tags=["extra-tag1"],
@@ -502,7 +502,7 @@ def test_iib_client(
         assert (
             iibc.add_deprecations(
                 "index-image",
-                deprecation_schema="link/to/deprecation/schema",
+                deprecation_schema='{"a": "b"}',
                 operator_package="my_package",
                 raw=True,
             )

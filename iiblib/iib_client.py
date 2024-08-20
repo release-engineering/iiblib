@@ -423,7 +423,7 @@ class IIBClient(object):
             index_image (str)
                 Index image ref used as source to rebuild
             deprecation_schema (str)
-                Link of deprecation schema
+                JSON formatted deprecation schema
             operator_package (str)
                 Operator package to add deprecations to
             binary_image (str)
