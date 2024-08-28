@@ -535,7 +535,7 @@ class AddDeprecationsModel(IIBBuildDetailsModel):
             A reference of binary image used for rebuilding
         binary_image_resolved (str)
             A checksum reference of binary image that was used for rebuilding
-        deprecation_schema (str)
+        deprecation_schema_url (str)
             A link to another endpoint that provides the deprecation schema for the request
         from_index (str)
             A reference of index image used as source for rebuild
@@ -556,7 +556,8 @@ class AddDeprecationsModel(IIBBuildDetailsModel):
     __slots__ = [
         "binary_image",
         "binary_image_resolved",
-        "deprecation_schema",
+        "build_tags",
+        "deprecation_schema_url",
         "from_index",
         "from_index_resolved",
         "index_image",

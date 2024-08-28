@@ -170,7 +170,8 @@ def fixture_add_deprecations_build_details_json(fixture_base_build_details_json)
     json = {
         "id": 1,
         "request_type": "add-deprecations",
-        "deprecation_schema": "link/to/deprecation/schema",
+        "deprecation_schema_url": "link/to/deprecation/schema",
+        "build_tags": [],
         "binary_image": "binary_image",
         "binary_image_resolved": "binary_image_resolved",
         "from_index": "from_index",
@@ -484,7 +485,7 @@ def test_add_deprecations_model_attributes(fixture_add_deprecations_build_detail
 
     assert model.binary_image == model._data["binary_image"]
     assert model.binary_image_resolved == model._data["binary_image_resolved"]
-    assert model.deprecation_schema == model._data["deprecation_schema"]
+    assert model.deprecation_schema_url == model._data["deprecation_schema_url"]
     assert model.from_index == model._data["from_index"]
     assert model.from_index_resolved == model._data["from_index_resolved"]
     assert model.index_image == model._data["index_image"]
